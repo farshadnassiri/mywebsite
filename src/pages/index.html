@@ -1,0 +1,374 @@
+<!--META {
+  "slug": "index",
+  "title": "Farshad Nassiri — Fractional CFO & FP&A for founder-led businesses",
+  "desc": "Cash, profitability, pricing and forecasting — answered with working financial models, not slideware. Start with a Financial Health Review.",
+  "scripts": ["viz.js", "home.js"]
+}-->
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <span class="badge badge--accent badge--dot">Available for new engagements</span>
+        <h1 class="mt-2">Know where the cash goes, what actually makes money, and what happens next.</h1>
+        <p class="lede hero__lede">
+          I am a finance partner for founder-led businesses — <strong>FP&amp;A, costing and pricing,
+          cash forecasting and Fractional CFO support</strong>, delivered with the analytical
+          tooling most small companies never get access to.
+        </p>
+        <div class="btn-row hero__cta">
+          <a class="btn btn--primary btn--lg" href="financial-health-review.html">Request a Financial Health Review</a>
+          <a class="btn btn--ghost btn--lg" href="demos.html">See it working →</a>
+        </div>
+        <div class="hero__meta">
+          <span>Cash &amp; runway</span>
+          <span>Profitability by client</span>
+          <span>Pricing &amp; margin</span>
+          <span>Forecasting &amp; scenarios</span>
+          <span>Controls &amp; risk</span>
+        </div>
+      </div>
+
+      <!-- Live proof, above the fold -->
+      <div class="panel reveal">
+        <div class="panel__bar">
+          <span class="dot-row"><i></i><i></i><i></i></span>
+          <h4>13-Week Cash Outlook</h4>
+          <span class="badge" style="margin-left:auto">Synthetic data</span>
+        </div>
+        <div class="panel__body">
+          <div class="seg" role="group" aria-label="Scenario" id="hero-seg">
+            <button type="button" data-sc="base" aria-pressed="true">Base</button>
+            <button type="button" data-sc="slow" aria-pressed="false">Customers pay late</button>
+            <button type="button" data-sc="hire" aria-pressed="false">Hire 2 people</button>
+          </div>
+          <div class="kpi-grid mt-3">
+            <div class="kpi">
+              <div class="kpi__label">Lowest cash</div>
+              <div class="kpi__val" id="hero-min">—</div>
+              <div class="kpi__delta" id="hero-minwk">—</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Runway</div>
+              <div class="kpi__val" id="hero-runway">—</div>
+              <div class="kpi__delta" id="hero-runway-note">at current burn</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi__label">Funding gap</div>
+              <div class="kpi__val" id="hero-gap">—</div>
+              <div class="kpi__delta" id="hero-gap-note">vs. $75k safety floor</div>
+            </div>
+          </div>
+          <div class="chart mt-3" id="hero-chart" aria-label="13 week cash balance projection"></div>
+          <p class="xsmall muted mt-2" id="hero-note"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHAT I AM ================= -->
+<section class="section--tight">
+  <div class="wrap">
+    <dl class="stats">
+      <div><dt>Where I sit</dt><dd>Finance, not IT</dd></div>
+      <div><dt>How I work</dt><dd>Models, not decks</dd></div>
+      <div><dt>Entry point</dt><dd>One review</dd></div>
+      <div><dt>Where it can go</dt><dd>Fractional CFO</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= QUESTIONS ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Start with your question, not my service list</span>
+      <h2>Most owners do not need “a report.” They need an answer.</h2>
+      <p>
+        Pick the question that is actually keeping you up. Each one leads to a working model you
+        can play with — and to the service behind it.
+      </p>
+    </div>
+
+    <div class="grid g-3">
+      <a class="qcard reveal" href="demos/cash-runway.html">
+        <span class="badge">Cash</span>
+        <span class="qcard__q">“How long does our cash actually last?”</span>
+        <span class="qcard__a">A 13-week cash view built from your invoices and payment terms — not from last month’s bank balance.</span>
+        <span class="qcard__foot"><span class="link-arrow">Open the cash model</span></span>
+      </a>
+      <a class="qcard reveal" href="demos/profitability.html">
+        <span class="badge">Profit</span>
+        <span class="qcard__q">“Which clients are we losing money on?”</span>
+        <span class="qcard__a">Revenue is not profit. Once overhead is allocated honestly, some of your best-known clients turn red.</span>
+        <span class="qcard__foot"><span class="link-arrow">Open the margin model</span></span>
+      </a>
+      <a class="qcard reveal" href="demos/pricing-simulator.html">
+        <span class="badge">Pricing</span>
+        <span class="qcard__q">“Are we charging enough?”</span>
+        <span class="qcard__a">Move the price 8% and watch profit, break-even volume and the customers you can afford to lose.</span>
+        <span class="qcard__foot"><span class="link-arrow">Open the pricing simulator</span></span>
+      </a>
+      <a class="qcard reveal" href="demos/cash-runway.html#hiring">
+        <span class="badge">Hiring</span>
+        <span class="qcard__q">“Can we afford to hire?”</span>
+        <span class="qcard__a">A hire is a 12-month cash commitment made on one day’s information. Model it before you sign.</span>
+        <span class="qcard__foot"><span class="link-arrow">Test a hire</span></span>
+      </a>
+      <a class="qcard reveal" href="demos/spend-controls.html">
+        <span class="badge">Risk</span>
+        <span class="qcard__q">“Could money be leaving without anyone noticing?”</span>
+        <span class="qcard__a">Duplicate payments, invoices split just under an approval limit, weekend journals. Testable — on every transaction, not a sample.</span>
+        <span class="qcard__foot"><span class="link-arrow">Run the control tests</span></span>
+      </a>
+      <a class="qcard reveal" href="solutions.html">
+        <span class="badge">Everything else</span>
+        <span class="qcard__q">“My question is not on this list.”</span>
+        <span class="qcard__a">Working capital, break-even, cost allocation, month-end close, board reporting, scenario planning.</span>
+        <span class="qcard__foot"><span class="link-arrow">See the full problem library</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROOF ================= -->
+<section class="section section--alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow eyebrow--accent">Proof you can click on</span>
+      <h2>Anyone can claim financial insight. These let you test it.</h2>
+      <p>
+        Four working models, each built around a decision an owner actually has to make.
+        Change the assumptions and the conclusion changes with them — that is the point.
+      </p>
+    </div>
+    <div class="grid g-2">
+      <a class="card card--hover reveal" href="demos/pricing-simulator.html">
+        <div class="card__top"><span class="badge badge--accent">Interactive</span><span class="tile-num">01</span></div>
+        <h3>Pricing &amp; margin simulator</h3>
+        <p>Change price, watch volume respond, and see the profit outcome — including the maximum volume you can afford to lose before a price rise backfires.</p>
+        <div class="card__foot"><span class="link-arrow">Open simulator</span></div>
+      </a>
+      <a class="card card--hover reveal" href="demos/cash-runway.html">
+        <div class="card__top"><span class="badge badge--accent">Interactive</span><span class="tile-num">02</span></div>
+        <h3>13-week cash flow &amp; runway</h3>
+        <p>Collection delays, payroll, tax dates and a possible hire — projected weekly, with the trough week and the funding gap called out.</p>
+        <div class="card__foot"><span class="link-arrow">Open cash model</span></div>
+      </a>
+      <a class="card card--hover reveal" href="demos/profitability.html">
+        <div class="card__top"><span class="badge badge--accent">Interactive</span><span class="tile-num">03</span></div>
+        <h3>Client profitability &amp; margin leakage</h3>
+        <p>Allocate overhead by revenue or by labour hours and watch the ranking change. Quantifies exactly how much margin the bottom of the list is costing you.</p>
+        <div class="card__foot"><span class="link-arrow">Open margin model</span></div>
+      </a>
+      <a class="card card--hover reveal" href="demos/spend-controls.html">
+        <div class="card__top"><span class="badge badge--accent">Interactive</span><span class="tile-num">04</span></div>
+        <h3>Spend controls &amp; audit analytics</h3>
+        <p>Four control tests run across a full payment ledger: duplicates, approval-threshold splitting, off-hours postings, new-vendor risk. Value at risk, quantified.</p>
+        <div class="card__foot"><span class="link-arrow">Run the tests</span></div>
+      </a>
+    </div>
+    <div class="callout callout--box mt-4">
+      <h4>Every figure on this site is synthetic — and labelled.</h4>
+      <p class="small muted">
+        These models demonstrate method, not client results. Real engagements are covered by an NDA;
+        as clients agree to be referenced, anonymised outcomes will replace the demonstrations.
+        I would rather show you honest scaffolding than invented case studies.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DIFFERENTIATION ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Why this and not the alternatives</span>
+      <h2>The finance is the product. The technology is how it gets delivered.</h2>
+    </div>
+    <div class="grid g-4">
+      <div class="card reveal">
+        <h4>vs. your bookkeeper</h4>
+        <p>Bookkeeping tells you what happened. I work on what it means and what to do — pricing, margin, runway, risk. Both are needed; they are not the same job.</p>
+      </div>
+      <div class="card reveal">
+        <h4>vs. a traditional accountant</h4>
+        <p>Historical reporting is the starting point, not the deliverable. Forecasting, scenarios and decision support are where the value sits.</p>
+      </div>
+      <div class="card reveal">
+        <h4>vs. an AI freelancer</h4>
+        <p>You already have access to AI. What you are buying is the financial logic it has to be pointed at — cost structure, allocation, controls, judgement. AI is my leverage, not my offer.</p>
+      </div>
+      <div class="card reveal">
+        <h4>vs. a dashboard developer</h4>
+        <p>A dashboard is a delivery layer. The real question is which decision it enables, and whether the numbers behind it are constructed correctly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SERVICES + LADDER ================= -->
+<section class="section section--alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">What you can actually buy</span>
+      <h2>Start small. Scale the relationship only if it earns it.</h2>
+      <p>You do not need to hire a CFO to get a CFO’s answer to one question.</p>
+    </div>
+
+    <div class="ladder mb-3">
+      <div class="rung rung--now">
+        <span class="rung__step">Step 1 · Start here</span>
+        <h4>Financial Health Review</h4>
+        <p>One diagnostic. Fixed fee, fixed scope, 30/60/90-day plan at the end.</p>
+      </div>
+      <div class="rung">
+        <span class="rung__step">Step 2 · Fix one thing</span>
+        <h4>Focused project</h4>
+        <p>Costing &amp; pricing, a cash model, a controls review, or a reporting rebuild.</p>
+      </div>
+      <div class="rung">
+        <span class="rung__step">Step 3 · Keep it running</span>
+        <h4>Monthly finance &amp; FP&amp;A</h4>
+        <p>Close, reporting pack, rolling forecast, monthly decision review.</p>
+      </div>
+      <div class="rung">
+        <span class="rung__step">Step 4 · When it gets complex</span>
+        <h4>Fractional CFO</h4>
+        <p>Cash strategy, pricing, hiring, capital and board support as an ongoing partner.</p>
+      </div>
+    </div>
+
+    <div class="grid g-3">
+      <a class="card card--hover reveal" href="services.html#costing-pricing"><h4>Costing &amp; Pricing</h4><p>True unit cost, overhead allocation, target margin, break-even and price scenarios.</p><div class="card__foot"><span class="link-arrow">Details</span></div></a>
+      <a class="card card--hover reveal" href="services.html#fpa"><h4>FP&amp;A &amp; Forecasting</h4><p>Budget, rolling forecast, 13-week cash, scenario and hiring models.</p><div class="card__foot"><span class="link-arrow">Details</span></div></a>
+      <a class="card card--hover reveal" href="services.html#controls"><h4>Financial Controls</h4><p>Payment controls, approvals, segregation of duties, system access, month-end close.</p><div class="card__foot"><span class="link-arrow">Details</span></div></a>
+      <a class="card card--hover reveal" href="services.html#internal-audit"><h4>Remote Internal Audit</h4><p>Independent process review with data-driven testing across full populations.</p><div class="card__foot"><span class="link-arrow">Details</span></div></a>
+      <a class="card card--hover reveal" href="services.html#automation"><h4>Finance Automation</h4><p>Consolidating scattered data, killing manual spreadsheet work, live reporting.</p><div class="card__foot"><span class="link-arrow">Details</span></div></a>
+      <a class="card card--hover reveal" href="services.html#fractional-cfo"><h4>Fractional CFO</h4><p>Ongoing decision partner on cash, pricing, growth, hiring and capital.</p><div class="card__foot"><span class="link-arrow">Details</span></div></a>
+    </div>
+    <p class="small muted mt-3">
+      Also available as secondary work: <a class="link-arrow" href="services.html#accounting">accounting &amp; reporting support</a>
+      — cleanup, reconciliations, month-end and management accounts.
+    </p>
+  </div>
+</section>
+
+<!-- ================= ENTRY OFFER ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <span class="eyebrow eyebrow--accent">The low-risk way to start</span>
+        <h2>The Financial Health Review</h2>
+        <p class="lede mt-2">
+          A structured diagnostic of your finances across seven dimensions, delivered as a written
+          findings report and a 30/60/90-day action plan. No retainer, no system migration, no
+          commitment beyond the review itself.
+        </p>
+        <div class="btn-row mt-3">
+          <a class="btn btn--primary" href="financial-health-review.html">See what is included</a>
+          <a class="btn btn--ghost" href="contact.html?service=Financial%20Health%20Review">Request one</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card__top">
+          <span class="badge badge--warn">Founding-client offer · first 3 engagements</span>
+        </div>
+        <div class="price-card">
+          <div class="price">
+            <span class="price__now">$495</span>
+            <span class="price__was">$750</span>
+          </div>
+          <p class="price__unit">Fixed fee. One business. Delivered in 5–7 business days.</p>
+        </div>
+        <ul class="checklist mt-3">
+          <li>Profitability &amp; margin structure</li>
+          <li>Cash position, runway and working capital</li>
+          <li>Pricing sanity check against real cost</li>
+          <li>Reporting quality and what is missing</li>
+          <li>Financial controls and exposure points</li>
+          <li>Key risks, ranked by cash impact</li>
+          <li>A 30/60/90-day plan you can execute without me</li>
+        </ul>
+        <div class="card__foot">
+          <p class="note">
+            The founding-client rate exists to buy early references, not to set a permanent price.
+            After the first three engagements it returns to $750.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TRUST ================= -->
+<section class="section section--alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Before you send a stranger your numbers</span>
+      <h2>Working remotely with financial data, safely.</h2>
+    </div>
+    <div class="grid g-3">
+      <div class="card reveal">
+        <h4>No banking credentials. Ever.</h4>
+        <p>I never ask for bank logins or payment authority. Read-only exports from whatever system you already use are enough.</p>
+      </div>
+      <div class="card reveal">
+        <h4>Anonymise before you send</h4>
+        <p>Customer and employee names can be replaced with codes. The analysis works identically on anonymised data — I need the structure, not the identities.</p>
+      </div>
+      <div class="card reveal">
+        <h4>NDA first, if you prefer</h4>
+        <p>Happy to sign yours before the first call. If you do not have one, I will send a short mutual NDA.</p>
+      </div>
+      <div class="card reveal">
+        <h4>“We don’t have those reports”</h4>
+        <p>Almost nobody does. If the raw data exists — invoices, ledger exports, payroll, a spreadsheet — the reports can be reconstructed from it.</p>
+      </div>
+      <div class="card reveal">
+        <h4>“We don’t use QuickBooks”</h4>
+        <p>Fine. Xero, Zoho, Sage, an ERP, or a folder of spreadsheets. I work from exports, so the software you use is not a constraint.</p>
+      </div>
+      <div class="card reveal">
+        <h4>Clear professional boundaries</h4>
+        <p>Advisory and internal-audit work — <strong>not</strong> statutory audit, external assurance, legal or tax advice. Stated plainly so nobody is misled. <a class="link-arrow" href="about.html#scope">Scope</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT TEASER ================= -->
+<section class="section">
+  <div class="wrap wrap--narrow center">
+    <span class="eyebrow">Who you would be working with</span>
+    <h2>An accountant who builds the tools, not a developer who read a finance book.</h2>
+    <p class="lede mt-3" style="margin-inline:auto">
+      Accounting and finance background, ACCA candidate, and enough engineering ability to build
+      the models, automation and analytics myself. That combination is why an engagement produces a
+      working instrument instead of a static report — and why the judgement behind it stays financial.
+    </p>
+    <div class="btn-row mt-3" style="justify-content:center">
+      <a class="btn btn--ghost" href="about.html">More about my background</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="section section--tight">
+  <div class="wrap">
+    <div class="cta-band">
+      <h2>What financial question are you trying to answer?</h2>
+      <p>
+        Send it in one sentence. If it is a question I can answer usefully, you will get a real
+        answer — and, where it helps, a short model built around your situation rather than mine.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn--primary btn--lg" href="contact.html">Discuss your business</a>
+        <a class="btn btn--ghost btn--lg" href="financial-health-review.html">Request a Financial Health Review</a>
+      </div>
+    </div>
+  </div>
+</section>

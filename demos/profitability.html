@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Client profitability &amp; margin leakage — Farshad Nassiri</title>
+<meta name="description" content="Allocate overhead honestly and watch the client ranking change. Which accounts actually make money, and what firing one really costs.">
+<meta name="author" content="Farshad Nassiri">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0D0E" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Client profitability &amp; margin leakage — Farshad Nassiri">
+<meta property="og:description" content="Allocate overhead honestly and watch the client ranking change. Which accounts actually make money, and what firing one really costs.">
+<meta property="og:site_name" content="Farshad Nassiri — Tech-Enabled Finance">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="../demos/profitability.html">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/main.css">
+<script>
+  /* Set the theme before first paint to avoid a flash. */
+  (function () {
+    try {
+      var t = localStorage.getItem('fn-theme');
+      if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+    /* Marks that JS is running, which is what gates the reveal animation.
+       Without it every .reveal element stays fully visible. */
+    document.documentElement.classList.add('js');
+  })();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="../index.html">
+      <span class="brand__mark">FN</span>
+      <span>Farshad Nassiri<span class="brand__sub"> · Tech-Enabled Finance</span></span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="../solutions.html">Solutions</a>
+      <a href="../demos.html">Interactive demos</a>
+      <a href="../services.html">Services</a>
+      <a href="../financial-health-review.html">Health Review</a>
+      <a href="../about.html">About</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="icon-btn" data-theme-toggle type="button" aria-label="Switch theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+      </button>
+      <a class="btn btn--primary btn--sm" href="../contact.html">Discuss your business</a>
+      <button class="icon-btn nav__toggle" data-drawer-toggle type="button" aria-expanded="false" aria-controls="drawer" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="../solutions.html">Solutions</a>
+  <a href="../demos.html">Interactive demos</a>
+  <a href="../services.html">Services</a>
+  <a href="../financial-health-review.html">Financial Health Review</a>
+  <a href="../about.html">About</a>
+  <a href="../contact.html">Contact</a>
+  <a class="btn btn--primary" href="../financial-health-review.html">Request a Financial Health Review</a>
+</div>
+
+<main id="main">
+<section class="pagehead">
+  <div class="wrap wrap--wide">
+    <p class="crumb"><a href="../demos.html">Interactive demos</a><span>/</span>Client profitability</p>
+    <div class="flex between" style="align-items:flex-start">
+      <div>
+        <h1>Your biggest client and your best client are rarely the same company.</h1>
+        <p class="lede">
+          Revenue is easy to see. Cost to serve is not. Change how overhead is allocated and the
+          league table rearranges itself — which is precisely why the allocation basis is a
+          management decision, not an accounting formality.
+        </p>
+      </div>
+      <span class="badge badge--warn" style="flex:none">Synthetic data</span>
+    </div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap wrap--wide">
+    <div class="demo-layout">
+
+      <aside class="demo-side">
+        <div class="card" style="gap:0">
+          <h4 class="mb-3">Allocate overhead by</h4>
+          <div class="seg seg--stack" role="group" aria-label="Allocation basis" id="pf-basis">
+            <button type="button" data-basis="revenue" aria-pressed="true">Revenue</button>
+            <button type="button" data-basis="hours" aria-pressed="false">Labour hours</button>
+            <button type="button" data-basis="effort" aria-pressed="false">Service effort</button>
+          </div>
+          <p class="xsmall muted mt-3" id="pf-basis-note"></p>
+        </div>
+
+        <div class="card" style="gap:0">
+          <h4 class="mb-3">Assumptions</h4>
+          <div class="controls">
+            <div class="field"><label for="pf-oh">Monthly overhead pool</label>
+              <input id="pf-oh" type="number" value="46000" step="1000">
+              <span class="field__hint">Admin salaries, rent, software, management time — everything not booked to a job.</span></div>
+            <div class="ctrl">
+              <div class="ctrl__head"><span class="ctrl__label">Target net margin</span><span class="ctrl__val" id="pf-tm-val">15%</span></div>
+              <input id="pf-tm" type="range" min="0" max="40" step="1" value="15">
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="gap:0">
+          <h4 class="mb-3">“Should we fire them?”</h4>
+          <div class="controls">
+            <div class="field"><label for="pf-drop">Drop a client</label>
+              <select id="pf-drop"><option value="">Keep everyone</option></select></div>
+            <div class="ctrl">
+              <div class="ctrl__head"><span class="ctrl__label">Overhead you could actually remove</span><span class="ctrl__val" id="pf-av-val">20%</span></div>
+              <input id="pf-av" type="range" min="0" max="100" step="5" value="20">
+              <span class="ctrl__hint">Of the overhead that client was carrying. Rent and management salary do not leave with them.</span>
+            </div>
+          </div>
+          <div class="callout callout--box mt-3" style="padding:14px 16px" id="pf-drop-out">
+            <p class="xsmall muted mt-0">Pick a client to see what losing them actually does to total profit.</p>
+          </div>
+        </div>
+      </aside>
+
+      <div class="stack-lg">
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi__label">Operating profit</div><div class="kpi__val" id="pf-op">—</div><div class="kpi__delta" id="pf-op-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Blended net margin</div><div class="kpi__val" id="pf-nm">—</div><div class="kpi__delta" id="pf-nm-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Clients below target</div><div class="kpi__val" id="pf-bt">—</div><div class="kpi__delta" id="pf-bt-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Margin leakage</div><div class="kpi__val" id="pf-leak">—</div><div class="kpi__delta">per month vs. target</div></div>
+          <div class="kpi"><div class="kpi__label">Loss-making clients</div><div class="kpi__val" id="pf-loss">—</div><div class="kpi__delta" id="pf-loss-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Profit concentration</div><div class="kpi__val" id="pf-conc">—</div><div class="kpi__delta">from the top 3 accounts</div></div>
+        </div>
+
+        <div class="card">
+          <div class="flex between mb-3">
+            <h4>Monthly profit by client, after overhead</h4>
+            <span class="badge" id="pf-basis-badge">by revenue</span>
+          </div>
+          <div class="chart" id="pf-bars"></div>
+          <div class="legend">
+            <span><i style="background:var(--accent)"></i>At or above target</span>
+            <span><i style="background:var(--warn)"></i>Profitable but below target</span>
+            <span><i style="background:var(--danger)"></i>Loss-making</span>
+          </div>
+        </div>
+
+        <div class="insight">
+          <div class="insight__label">◆ CFO reading</div>
+          <div id="pf-insight"></div>
+        </div>
+
+        <div class="card">
+          <h4 class="mb-3">The full picture</h4>
+          <div class="table-wrap">
+            <table class="data">
+              <thead><tr>
+                <th>Client</th><th class="n">Revenue</th><th class="n">Direct cost</th>
+                <th class="n">Hours</th><th class="n">Overhead</th>
+                <th class="n">Net profit</th><th class="n">Net margin</th><th class="n">Rev / hour</th>
+              </tr></thead>
+              <tbody id="pf-tbody"></tbody>
+              <tfoot id="pf-tfoot"></tfoot>
+            </table>
+          </div>
+          <p class="small muted mt-2">
+            Revenue per hour is the column most service businesses have never calculated. It usually
+            explains the whole ranking in one number.
+          </p>
+        </div>
+
+        <div class="card">
+          <h4>What this looks like as an engagement</h4>
+          <p class="small muted mt-1">
+            Built from your sales ledger, timesheets or job records, and payroll. If time is not
+            tracked, a defensible allocation can still be built from headcount, job counts or delivery
+            volume — the goal is a basis your team will accept, not academic perfection.
+            The output usually leads directly into a pricing conversation.
+          </p>
+          <div class="btn-row mt-3">
+            <a class="btn btn--primary" href="../contact.html?service=Costing%20%26%20Pricing">Request a profitability review</a>
+            <a class="btn btn--ghost" href="../demos/pricing-simulator.html">Then test a price change →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <a class="brand" href="../index.html">
+          <span class="brand__mark">FN</span>
+          <span>Farshad Nassiri</span>
+        </a>
+        <p class="small muted mt-2" style="max-width:34ch">
+          Finance leadership supported by technology — cash, profitability, pricing and
+          forecasting for founder-led businesses.
+        </p>
+        <p class="small mt-2"><a class="link-arrow" href="mailto:farshadnassiri@gmail.com">farshadnassiri@gmail.com</a></p>
+      </div>
+      <div>
+        <h5>Start here</h5>
+        <nav>
+          <a href="../financial-health-review.html">Financial Health Review</a>
+          <a href="../solutions.html">Find your question</a>
+          <a href="../demos.html">Interactive demos</a>
+          <a href="../contact.html">Discuss your business</a>
+        </nav>
+      </div>
+      <div>
+        <h5>Services</h5>
+        <nav>
+          <a href="../services.html#costing-pricing">Costing &amp; Pricing</a>
+          <a href="../services.html#fpa">FP&amp;A &amp; Forecasting</a>
+          <a href="../services.html#controls">Financial Controls</a>
+          <a href="../services.html#internal-audit">Remote Internal Audit</a>
+          <a href="../services.html#automation">Finance Automation</a>
+          <a href="../services.html#fractional-cfo">Fractional CFO</a>
+        </nav>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <nav>
+          <a href="../about.html">About &amp; credentials</a>
+          <a href="../about.html#trust">Data handling</a>
+          <a href="../about.html#scope">Scope of services</a>
+          <a href="../contact.html">Contact</a>
+        </nav>
+      </div>
+    </div>
+    <p class="footer__legal">
+      All figures, dashboards and case examples on this site are built on
+      <strong>synthetic data</strong> created to demonstrate method, and are labelled as such.
+      Advisory and internal-audit work described here is <strong>not</strong> a statutory or external
+      audit, and does not constitute an assurance engagement, a legal opinion, or tax advice.
+    </p>
+    <div class="footer__base">
+      <span>© <span data-year>2026</span> Farshad Nassiri. All rights reserved.</span>
+      <span>Built as a working demonstration — the site itself is part of the portfolio.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/site.js"></script>
+  <script src="../assets/js/viz.js"></script>
+  <script src="../assets/js/demo-profit.js"></script>
+</body>
+</html>

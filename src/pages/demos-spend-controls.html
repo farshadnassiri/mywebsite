@@ -1,0 +1,129 @@
+<!--META {
+  "slug": "demos/spend-controls",
+  "title": "Spend controls & audit analytics — Farshad Nassiri",
+  "desc": "Five control tests run across an entire payment population: duplicates, approval-limit splitting, off-hours postings, segregation of duties, new-vendor risk.",
+  "scripts": ["viz.js", "demo-controls.js"]
+}-->
+
+<section class="pagehead">
+  <div class="wrap wrap--wide">
+    <p class="crumb"><a href="{{base}}demos.html">Interactive demos</a><span>/</span>Controls &amp; audit analytics</p>
+    <div class="flex between" style="align-items:flex-start">
+      <div>
+        <h1>Testing every transaction, not twenty of them.</h1>
+        <p class="lede">
+          Traditional review samples. Code does not have to. Below is a month of payments run
+          through five control tests — the same tests I would run on your ledger, on the whole
+          population, in minutes rather than days.
+        </p>
+      </div>
+      <span class="badge badge--warn" style="flex:none">Synthetic data</span>
+    </div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap wrap--wide">
+    <div class="demo-layout">
+
+      <aside class="demo-side">
+        <div class="card" style="gap:0">
+          <h4 class="mb-3">Control tests</h4>
+          <div class="controls">
+            <label class="switch"><input type="checkbox" data-test="dupe" checked><span class="switch__track"></span><span>Duplicate payments</span></label>
+            <label class="switch"><input type="checkbox" data-test="split" checked><span class="switch__track"></span><span>Approval-limit splitting</span></label>
+            <label class="switch"><input type="checkbox" data-test="sod" checked><span class="switch__track"></span><span>Segregation of duties</span></label>
+            <label class="switch"><input type="checkbox" data-test="hours" checked><span class="switch__track"></span><span>Off-hours postings</span></label>
+            <label class="switch"><input type="checkbox" data-test="vendor" checked><span class="switch__track"></span><span>New-vendor risk</span></label>
+          </div>
+        </div>
+
+        <div class="card" style="gap:0">
+          <h4 class="mb-3">Parameters</h4>
+          <div class="controls">
+            <div class="field"><label for="s-limit">Approval limit</label>
+              <input id="s-limit" type="number" value="5000" step="500">
+              <span class="field__hint">Above this, a second signature is required.</span></div>
+            <div class="ctrl">
+              <div class="ctrl__head"><span class="ctrl__label">“Just under” band</span><span class="ctrl__val" id="s-band-val">10%</span></div>
+              <input id="s-band" type="range" min="2" max="25" step="1" value="10">
+              <span class="ctrl__hint">How close to the limit counts as suspicious.</span>
+            </div>
+            <div class="field"><label for="s-newv">New vendor: days since setup</label>
+              <input id="s-newv" type="number" value="30" step="5"></div>
+            <div class="field"><label for="s-mat">Materiality floor</label>
+              <input id="s-mat" type="number" value="500" step="100">
+              <span class="field__hint">Ignore exceptions below this value.</span></div>
+          </div>
+        </div>
+
+        <div class="callout callout--box callout--warn">
+          <p class="xsmall muted mt-0">
+            <strong>This is internal audit, not statutory audit.</strong> Process and control review
+            for management. It is not an external audit, an assurance engagement, or an opinion on
+            financial statements. <a class="link-arrow" href="{{base}}about.html#scope">Scope</a>
+          </p>
+        </div>
+      </aside>
+
+      <div class="stack-lg">
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi__label">Payments tested</div><div class="kpi__val" id="s-n">—</div><div class="kpi__delta" id="s-nv">—</div></div>
+          <div class="kpi"><div class="kpi__label">Exceptions raised</div><div class="kpi__val" id="s-ex">—</div><div class="kpi__delta" id="s-exr">—</div></div>
+          <div class="kpi"><div class="kpi__label">Value at risk</div><div class="kpi__val" id="s-var">—</div><div class="kpi__delta" id="s-varp">—</div></div>
+          <div class="kpi"><div class="kpi__label">Likely recoverable</div><div class="kpi__val" id="s-rec">—</div><div class="kpi__delta">duplicate payments</div></div>
+          <div class="kpi"><div class="kpi__label">Control bypassed</div><div class="kpi__val" id="s-byp">—</div><div class="kpi__delta">payments over the limit without a second signature</div></div>
+          <div class="kpi"><div class="kpi__label">Coverage</div><div class="kpi__val">100%</div><div class="kpi__delta">not a sample</div></div>
+        </div>
+
+        <div class="card">
+          <h4 class="mb-3">Exceptions by test</h4>
+          <div class="chart" id="s-chart"></div>
+          <p class="small muted mt-2">
+            The count matters less than the pattern. One duplicate is an accident; a vendor that
+            produces three invoices a week just below the approval limit is a process telling you
+            something.
+          </p>
+        </div>
+
+        <div class="insight">
+          <div class="insight__label">◆ CFO reading</div>
+          <div id="s-insight"></div>
+        </div>
+
+        <div class="card">
+          <div class="flex between mb-3">
+            <h4>Payment ledger — April</h4>
+            <div class="seg" role="group" id="s-view">
+              <button type="button" data-view="flagged" aria-pressed="true">Exceptions only</button>
+              <button type="button" data-view="all" aria-pressed="false">All payments</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data data--wrap">
+              <thead><tr>
+                <th>Date</th><th>Vendor</th><th class="n">Amount</th>
+                <th>Entered / approved</th><th>Control finding</th>
+              </tr></thead>
+              <tbody id="s-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4 class="mb-3">What management does with this</h4>
+          <div class="grid g-2" style="gap:14px">
+            <div><h4 class="small">Recover</h4><p class="small muted">Duplicate payments are a direct cash recovery — usually the fastest return an owner gets from any finance project.</p></div>
+            <div><h4 class="small">Reset the limit</h4><p class="small muted">If invoices cluster just under the approval limit, the limit is not working. Change the threshold, or approve by vendor rather than by invoice.</p></div>
+            <div><h4 class="small">Split the duties</h4><p class="small muted">In a small team one person often enters and approves. That is normal — but it needs a compensating control, such as an owner review of the weekly payment run.</p></div>
+            <div><h4 class="small">Make it repeatable</h4><p class="small muted">The value is not one report. It is these tests running every month on the current export, so exceptions surface while they are still fixable.</p></div>
+          </div>
+          <div class="btn-row mt-3">
+            <a class="btn btn--primary" href="{{base}}contact.html?service=Financial%20Controls%20Review">Request a controls review</a>
+            <a class="btn btn--ghost" href="{{base}}services.html#internal-audit">Remote internal audit →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

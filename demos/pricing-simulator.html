@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pricing &amp; margin simulator — Farshad Nassiri</title>
+<meta name="description" content="Move price and volume assumptions and watch operating profit, break-even and margin respond. A working pricing model, not a slide.">
+<meta name="author" content="Farshad Nassiri">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0D0E" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pricing &amp; margin simulator — Farshad Nassiri">
+<meta property="og:description" content="Move price and volume assumptions and watch operating profit, break-even and margin respond. A working pricing model, not a slide.">
+<meta property="og:site_name" content="Farshad Nassiri — Tech-Enabled Finance">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="../demos/pricing-simulator.html">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/main.css">
+<script>
+  /* Set the theme before first paint to avoid a flash. */
+  (function () {
+    try {
+      var t = localStorage.getItem('fn-theme');
+      if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+    /* Marks that JS is running, which is what gates the reveal animation.
+       Without it every .reveal element stays fully visible. */
+    document.documentElement.classList.add('js');
+  })();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="../index.html">
+      <span class="brand__mark">FN</span>
+      <span>Farshad Nassiri<span class="brand__sub"> · Tech-Enabled Finance</span></span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="../solutions.html">Solutions</a>
+      <a href="../demos.html">Interactive demos</a>
+      <a href="../services.html">Services</a>
+      <a href="../financial-health-review.html">Health Review</a>
+      <a href="../about.html">About</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="icon-btn" data-theme-toggle type="button" aria-label="Switch theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+      </button>
+      <a class="btn btn--primary btn--sm" href="../contact.html">Discuss your business</a>
+      <button class="icon-btn nav__toggle" data-drawer-toggle type="button" aria-expanded="false" aria-controls="drawer" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="../solutions.html">Solutions</a>
+  <a href="../demos.html">Interactive demos</a>
+  <a href="../services.html">Services</a>
+  <a href="../financial-health-review.html">Financial Health Review</a>
+  <a href="../about.html">About</a>
+  <a href="../contact.html">Contact</a>
+  <a class="btn btn--primary" href="../financial-health-review.html">Request a Financial Health Review</a>
+</div>
+
+<main id="main">
+<section class="pagehead">
+  <div class="wrap wrap--wide">
+    <p class="crumb"><a href="../demos.html">Interactive demos</a><span>/</span>Pricing &amp; margin</p>
+    <div class="flex between" style="align-items:flex-start">
+      <div>
+        <h1>What actually happens if you raise the price?</h1>
+        <p class="lede">
+          Every owner has this argument with themselves. It is not a philosophical question —
+          it is arithmetic with one uncertain input. Move the sliders and watch the answer.
+        </p>
+      </div>
+      <span class="badge badge--warn" style="flex:none">Synthetic data</span>
+    </div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap wrap--wide">
+    <div class="demo-layout">
+
+      <!-- ---------- Controls ---------- -->
+      <aside class="demo-side">
+        <div class="card" style="gap:0">
+          <h4 class="mb-3">Your business</h4>
+          <div class="controls">
+            <div class="field"><label for="p-price">Average selling price</label>
+              <input id="p-price" type="number" value="125" min="1" step="1"></div>
+            <div class="field"><label for="p-vol">Units sold per month</label>
+              <input id="p-vol" type="number" value="1200" min="1" step="10"></div>
+            <div class="field"><label for="p-vc">Variable cost per unit</label>
+              <input id="p-vc" type="number" value="74" min="0" step="1">
+              <span class="field__hint">Materials, delivery, direct labour, payment fees.</span></div>
+            <div class="field"><label for="p-fc">Fixed costs per month</label>
+              <input id="p-fc" type="number" value="48000" min="0" step="500">
+              <span class="field__hint">Salaries, rent, software, everything that does not move with volume.</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="gap:0">
+          <h4 class="mb-3">The decision</h4>
+          <div class="controls">
+            <div class="ctrl">
+              <div class="ctrl__head"><span class="ctrl__label">Price change</span><span class="ctrl__val" id="p-dp-val">+10%</span></div>
+              <input id="p-dp" type="range" min="-20" max="30" step="1" value="10">
+            </div>
+            <div class="ctrl">
+              <div class="ctrl__head"><span class="ctrl__label">Customer sensitivity</span><span class="ctrl__val" id="p-el-val">1.2</span></div>
+              <input id="p-el" type="range" min="0" max="3" step="0.1" value="1.2">
+              <span class="ctrl__hint" id="p-el-note"></span>
+            </div>
+          </div>
+          <div class="callout callout--box mt-3" style="padding:14px 16px">
+            <p class="xsmall muted mt-0">
+              Sensitivity is the one number nobody knows precisely. That is exactly why it belongs on a
+              slider — the useful question is not “what is it?” but “how wrong can I be and still be right?”
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ---------- Output ---------- -->
+      <div class="stack-lg">
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi__label">Revenue / month</div><div class="kpi__val" id="p-rev">—</div><div class="kpi__delta" id="p-rev-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Gross margin</div><div class="kpi__val" id="p-gm">—</div><div class="kpi__delta" id="p-gm-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Operating profit</div><div class="kpi__val" id="p-op">—</div><div class="kpi__delta" id="p-op-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Units sold</div><div class="kpi__val" id="p-units">—</div><div class="kpi__delta" id="p-units-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Break-even units</div><div class="kpi__val" id="p-be">—</div><div class="kpi__delta" id="p-be-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Margin of safety</div><div class="kpi__val" id="p-mos">—</div><div class="kpi__delta">before you lose money</div></div>
+        </div>
+
+        <div class="card">
+          <div class="flex between mb-3">
+            <h4>Where profit is decomposed</h4>
+            <span class="badge">Price effect vs. volume effect</span>
+          </div>
+          <div class="chart" id="p-waterfall"></div>
+          <p class="small muted mt-2">
+            A price change pulls in two directions at once. The bar chart separates them, because
+            “revenue went up” and “this was a good decision” are not the same statement.
+          </p>
+        </div>
+
+        <div class="grid g-2">
+          <div class="card">
+            <h4 class="mb-3">Profit across the whole price range</h4>
+            <div class="chart" id="p-curve"></div>
+            <p class="small muted mt-2">Operating profit at every price change, holding your sensitivity assumption constant.</p>
+          </div>
+          <div class="card">
+            <h4 class="mb-3">Which 1% is worth the most?</h4>
+            <div class="chart" id="p-levers"></div>
+            <p class="small muted mt-2">
+              Monthly profit impact of a 1% improvement in each lever, at your current settings.
+              Price almost always wins — and is almost always the last one anybody touches.
+            </p>
+          </div>
+        </div>
+
+        <div class="insight">
+          <div class="insight__label">◆ CFO reading</div>
+          <div id="p-insight"></div>
+        </div>
+
+        <div class="card">
+          <h4>What this looks like as an engagement</h4>
+          <p class="small muted mt-1">
+            The demo assumes one product and one cost per unit. Real pricing work starts by
+            establishing what a unit actually costs you — including the overhead nobody allocates —
+            then builds this model on your product mix, your customer segments and your contract
+            terms. The output is a price decision you can defend to a customer, not a percentage.
+          </p>
+          <div class="btn-row mt-3">
+            <a class="btn btn--primary" href="../contact.html?service=Costing%20%26%20Pricing">Request a pricing review</a>
+            <a class="btn btn--ghost" href="../services.html#costing-pricing">The service behind this</a>
+          </div>
+        </div>
+
+        <div class="callout callout--box callout--warn">
+          <h4>Have a different question?</h4>
+          <p class="small muted">
+            If the decision you are weighing is not “what price”, tell me what it is. Short, focused
+            models like this one are how I usually start a conversation.
+            <a class="link-arrow" href="../contact.html">Send your question</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <a class="brand" href="../index.html">
+          <span class="brand__mark">FN</span>
+          <span>Farshad Nassiri</span>
+        </a>
+        <p class="small muted mt-2" style="max-width:34ch">
+          Finance leadership supported by technology — cash, profitability, pricing and
+          forecasting for founder-led businesses.
+        </p>
+        <p class="small mt-2"><a class="link-arrow" href="mailto:farshadnassiri@gmail.com">farshadnassiri@gmail.com</a></p>
+      </div>
+      <div>
+        <h5>Start here</h5>
+        <nav>
+          <a href="../financial-health-review.html">Financial Health Review</a>
+          <a href="../solutions.html">Find your question</a>
+          <a href="../demos.html">Interactive demos</a>
+          <a href="../contact.html">Discuss your business</a>
+        </nav>
+      </div>
+      <div>
+        <h5>Services</h5>
+        <nav>
+          <a href="../services.html#costing-pricing">Costing &amp; Pricing</a>
+          <a href="../services.html#fpa">FP&amp;A &amp; Forecasting</a>
+          <a href="../services.html#controls">Financial Controls</a>
+          <a href="../services.html#internal-audit">Remote Internal Audit</a>
+          <a href="../services.html#automation">Finance Automation</a>
+          <a href="../services.html#fractional-cfo">Fractional CFO</a>
+        </nav>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <nav>
+          <a href="../about.html">About &amp; credentials</a>
+          <a href="../about.html#trust">Data handling</a>
+          <a href="../about.html#scope">Scope of services</a>
+          <a href="../contact.html">Contact</a>
+        </nav>
+      </div>
+    </div>
+    <p class="footer__legal">
+      All figures, dashboards and case examples on this site are built on
+      <strong>synthetic data</strong> created to demonstrate method, and are labelled as such.
+      Advisory and internal-audit work described here is <strong>not</strong> a statutory or external
+      audit, and does not constitute an assurance engagement, a legal opinion, or tax advice.
+    </p>
+    <div class="footer__base">
+      <span>© <span data-year>2026</span> Farshad Nassiri. All rights reserved.</span>
+      <span>Built as a working demonstration — the site itself is part of the portfolio.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/site.js"></script>
+  <script src="../assets/js/viz.js"></script>
+  <script src="../assets/js/demo-pricing.js"></script>
+</body>
+</html>

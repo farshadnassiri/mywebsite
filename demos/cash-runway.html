@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13-week cash flow &amp; runway model — Farshad Nassiri</title>
+<meta name="description" content="A weekly cash forecast that reacts to collection delays, growth, payroll timing and a hiring decision. Find the trough week before it finds you.">
+<meta name="author" content="Farshad Nassiri">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0D0E" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="13-week cash flow &amp; runway model — Farshad Nassiri">
+<meta property="og:description" content="A weekly cash forecast that reacts to collection delays, growth, payroll timing and a hiring decision. Find the trough week before it finds you.">
+<meta property="og:site_name" content="Farshad Nassiri — Tech-Enabled Finance">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="../demos/cash-runway.html">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/main.css">
+<script>
+  /* Set the theme before first paint to avoid a flash. */
+  (function () {
+    try {
+      var t = localStorage.getItem('fn-theme');
+      if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+    /* Marks that JS is running, which is what gates the reveal animation.
+       Without it every .reveal element stays fully visible. */
+    document.documentElement.classList.add('js');
+  })();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="../index.html">
+      <span class="brand__mark">FN</span>
+      <span>Farshad Nassiri<span class="brand__sub"> · Tech-Enabled Finance</span></span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="../solutions.html">Solutions</a>
+      <a href="../demos.html">Interactive demos</a>
+      <a href="../services.html">Services</a>
+      <a href="../financial-health-review.html">Health Review</a>
+      <a href="../about.html">About</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="icon-btn" data-theme-toggle type="button" aria-label="Switch theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+      </button>
+      <a class="btn btn--primary btn--sm" href="../contact.html">Discuss your business</a>
+      <button class="icon-btn nav__toggle" data-drawer-toggle type="button" aria-expanded="false" aria-controls="drawer" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="../solutions.html">Solutions</a>
+  <a href="../demos.html">Interactive demos</a>
+  <a href="../services.html">Services</a>
+  <a href="../financial-health-review.html">Financial Health Review</a>
+  <a href="../about.html">About</a>
+  <a href="../contact.html">Contact</a>
+  <a class="btn btn--primary" href="../financial-health-review.html">Request a Financial Health Review</a>
+</div>
+
+<main id="main">
+<section class="pagehead">
+  <div class="wrap wrap--wide">
+    <p class="crumb"><a href="../demos.html">Interactive demos</a><span>/</span>Cash &amp; runway</p>
+    <div class="flex between" style="align-items:flex-start">
+      <div>
+        <h1>Profitable businesses run out of cash on a Tuesday.</h1>
+        <p class="lede">
+          Profit is an opinion formed monthly. Cash is a fact that arrives weekly. This model
+          projects thirteen weeks forward and tells you which week breaks — and by how much.
+        </p>
+      </div>
+      <span class="badge badge--warn" style="flex:none">Synthetic data</span>
+    </div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap wrap--wide">
+    <div class="demo-layout">
+
+      <aside class="demo-side">
+        <div class="card" style="gap:0">
+          <h4 class="mb-3">Trading assumptions</h4>
+          <div class="controls">
+            <div class="field"><label for="c-open">Cash in the bank today</label>
+              <input id="c-open" type="number" value="120000" step="1000"></div>
+            <div class="field"><label for="c-rev">Monthly revenue</label>
+              <input id="c-rev" type="number" value="150000" step="1000"></div>
+            <div class="ctrl">
+              <div class="ctrl__head"><span class="ctrl__label">Monthly growth</span><span class="ctrl__val" id="c-g-val">2%</span></div>
+              <input id="c-g" type="range" min="-5" max="12" step="0.5" value="2">
+            </div>
+            <div class="ctrl">
+              <div class="ctrl__head"><span class="ctrl__label">Days to get paid</span><span class="ctrl__val" id="c-dso-val">45 days</span></div>
+              <input id="c-dso" type="range" min="7" max="90" step="1" value="45">
+              <span class="ctrl__hint">Invoice date to money in the bank.</span>
+            </div>
+            <div class="ctrl">
+              <div class="ctrl__head"><span class="ctrl__label">Gross margin</span><span class="ctrl__val" id="c-gm-val">42%</span></div>
+              <input id="c-gm" type="range" min="10" max="90" step="1" value="42">
+              <span class="ctrl__hint">Everything below the line is paid to suppliers on ~21-day terms.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="gap:0">
+          <h4 class="mb-3">Fixed commitments</h4>
+          <div class="controls">
+            <div class="field"><label for="c-pay">Monthly payroll</label>
+              <input id="c-pay" type="number" value="38000" step="1000">
+              <span class="field__hint">Paid every second week.</span></div>
+            <div class="field"><label for="c-opex">Other monthly overhead</label>
+              <input id="c-opex" type="number" value="15000" step="1000"></div>
+            <div class="field"><label for="c-oneoff">One-off payment (tax, equipment)</label>
+              <input id="c-oneoff" type="number" value="35000" step="1000"></div>
+            <div class="ctrl">
+              <div class="ctrl__head"><span class="ctrl__label">…due in week</span><span class="ctrl__val" id="c-ow-val">6</span></div>
+              <input id="c-ow" type="range" min="1" max="13" step="1" value="6">
+            </div>
+            <div class="field"><label for="c-floor">Cash safety floor</label>
+              <input id="c-floor" type="number" value="75000" step="5000">
+              <span class="field__hint">The balance below which you would not sleep.</span></div>
+          </div>
+        </div>
+
+        <div class="card" id="hiring" style="gap:0">
+          <h4 class="mb-3">The hiring question</h4>
+          <label class="switch mb-3">
+            <input id="c-hire-on" type="checkbox">
+            <span class="switch__track"></span>
+            <span>Model new hires</span>
+          </label>
+          <div class="controls" id="c-hire-block" style="opacity:.45;pointer-events:none">
+            <div class="field"><label for="c-hire-n">How many</label>
+              <input id="c-hire-n" type="number" value="2" min="1" max="20" step="1"></div>
+            <div class="field"><label for="c-hire-cost">Fully-loaded cost each, per month</label>
+              <input id="c-hire-cost" type="number" value="9500" step="500">
+              <span class="field__hint">Salary plus employer taxes, benefits, equipment, software.</span></div>
+            <div class="ctrl">
+              <div class="ctrl__head"><span class="ctrl__label">Starting week</span><span class="ctrl__val" id="c-hw-val">3</span></div>
+              <input id="c-hw" type="range" min="1" max="13" step="1" value="3">
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="stack-lg">
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi__label">Lowest cash</div><div class="kpi__val" id="c-min">—</div><div class="kpi__delta" id="c-min-wk">—</div></div>
+          <div class="kpi"><div class="kpi__label">Weeks below floor</div><div class="kpi__val" id="c-below">—</div><div class="kpi__delta">of 13</div></div>
+          <div class="kpi"><div class="kpi__label">Funding gap</div><div class="kpi__val" id="c-gap">—</div><div class="kpi__delta">to stay above the floor</div></div>
+          <div class="kpi"><div class="kpi__label">Closing cash</div><div class="kpi__val" id="c-close">—</div><div class="kpi__delta" id="c-close-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Runway</div><div class="kpi__val" id="c-runway">—</div><div class="kpi__delta" id="c-runway-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Cash tied up in AR</div><div class="kpi__val" id="c-ar">—</div><div class="kpi__delta" id="c-ar-d">—</div></div>
+        </div>
+
+        <div class="card">
+          <div class="flex between mb-3">
+            <h4>Projected cash balance, week by week</h4>
+            <span class="badge" id="c-badge">13 weeks</span>
+          </div>
+          <div class="chart" id="c-chart"></div>
+          <div class="legend">
+            <span><i style="background:var(--accent)"></i>Cash balance</span>
+            <span><i style="background:var(--muted)"></i>Without the hires</span>
+            <span><i style="background:var(--danger)"></i>Safety floor</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4 class="mb-3">Weekly net movement</h4>
+          <div class="chart" id="c-net"></div>
+          <p class="small muted mt-2">
+            The pattern matters more than the total. Payroll weeks and the one-off payment create
+            the troughs; a good treasury decision is usually about moving a date, not finding money.
+          </p>
+        </div>
+
+        <div class="insight">
+          <div class="insight__label">◆ CFO reading</div>
+          <div id="c-insight"></div>
+        </div>
+
+        <details class="card">
+          <summary style="cursor:pointer;font-weight:600;font-size:.95rem">Show the underlying weekly schedule</summary>
+          <div class="table-wrap mt-3">
+            <table class="data">
+              <thead><tr>
+                <th>Week</th><th class="n">Collections</th><th class="n">Suppliers</th>
+                <th class="n">Payroll</th><th class="n">Overhead</th><th class="n">Other</th>
+                <th class="n">Net</th><th class="n">Closing cash</th>
+              </tr></thead>
+              <tbody id="c-tbody"></tbody>
+            </table>
+          </div>
+          <p class="small muted mt-2">
+            This is the artefact that actually gets used — a schedule the owner can take to a
+            supplier, a bank or a customer with a specific ask attached to a specific date.
+          </p>
+        </details>
+
+        <div class="card">
+          <h4>What this looks like as an engagement</h4>
+          <p class="small muted mt-1">
+            Built from your invoice ledger, payment terms, payroll calendar and committed costs —
+            then maintained weekly so it stays a decision tool rather than a one-off exercise.
+            Where the underlying reports do not exist, they get reconstructed from raw exports.
+          </p>
+          <div class="btn-row mt-3">
+            <a class="btn btn--primary" href="../contact.html?service=FP%26A%20%26%20Forecasting">Request a cash model</a>
+            <a class="btn btn--ghost" href="../services.html#fpa">The service behind this</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <a class="brand" href="../index.html">
+          <span class="brand__mark">FN</span>
+          <span>Farshad Nassiri</span>
+        </a>
+        <p class="small muted mt-2" style="max-width:34ch">
+          Finance leadership supported by technology — cash, profitability, pricing and
+          forecasting for founder-led businesses.
+        </p>
+        <p class="small mt-2"><a class="link-arrow" href="mailto:farshadnassiri@gmail.com">farshadnassiri@gmail.com</a></p>
+      </div>
+      <div>
+        <h5>Start here</h5>
+        <nav>
+          <a href="../financial-health-review.html">Financial Health Review</a>
+          <a href="../solutions.html">Find your question</a>
+          <a href="../demos.html">Interactive demos</a>
+          <a href="../contact.html">Discuss your business</a>
+        </nav>
+      </div>
+      <div>
+        <h5>Services</h5>
+        <nav>
+          <a href="../services.html#costing-pricing">Costing &amp; Pricing</a>
+          <a href="../services.html#fpa">FP&amp;A &amp; Forecasting</a>
+          <a href="../services.html#controls">Financial Controls</a>
+          <a href="../services.html#internal-audit">Remote Internal Audit</a>
+          <a href="../services.html#automation">Finance Automation</a>
+          <a href="../services.html#fractional-cfo">Fractional CFO</a>
+        </nav>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <nav>
+          <a href="../about.html">About &amp; credentials</a>
+          <a href="../about.html#trust">Data handling</a>
+          <a href="../about.html#scope">Scope of services</a>
+          <a href="../contact.html">Contact</a>
+        </nav>
+      </div>
+    </div>
+    <p class="footer__legal">
+      All figures, dashboards and case examples on this site are built on
+      <strong>synthetic data</strong> created to demonstrate method, and are labelled as such.
+      Advisory and internal-audit work described here is <strong>not</strong> a statutory or external
+      audit, and does not constitute an assurance engagement, a legal opinion, or tax advice.
+    </p>
+    <div class="footer__base">
+      <span>© <span data-year>2026</span> Farshad Nassiri. All rights reserved.</span>
+      <span>Built as a working demonstration — the site itself is part of the portfolio.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/site.js"></script>
+  <script src="../assets/js/viz.js"></script>
+  <script src="../assets/js/demo-cash.js"></script>
+</body>
+</html>
