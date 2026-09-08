@@ -124,26 +124,39 @@
         e.preventDefault();
         var btn = form.querySelector('[type="submit"]');
         if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+        var body = new FormData(form);
+        /* A subject line that says who and what, so enquiries are triageable
+           from the inbox list without opening them. */
+        var who = (body.get('company') || body.get('name') || 'Website').toString().trim();
+        var about = (body.get('service') || body.get('problem_area') || 'General enquiry').toString().trim();
+        body.set('_subject', who + ' — ' + about);
+        if (body.get('email')) body.set('_replyto', body.get('email'));
+
         fetch(endpoint, {
           method: 'POST',
           headers: { Accept: 'application/json' },
-          body: new FormData(form)
+          body: body
         }).then(function (r) {
           if (!r.ok) throw new Error('bad status');
           form.reset();
           if (status) {
             status.hidden = false;
             status.className = 'callout callout--box mt-3';
-            status.innerHTML = '<h4>Thank you — your message is on its way.</h4>' +
+            status.innerHTML = '<h4>Thank you — that has reached me.</h4>' +
               '<p class="small muted">You will get a reply within one business day, usually with two or three ' +
               'follow-up questions so the first call is useful rather than exploratory.</p>';
+            status.scrollIntoView({ block: 'nearest' });
           }
         }).catch(function () {
           if (status) {
             status.hidden = false;
             status.className = 'callout callout--box callout--warn mt-3';
-            status.innerHTML = '<h4>That did not go through.</h4><p class="small muted">Please email ' +
-              '<a class="link-arrow" href="mailto:farshadnassiri@gmail.com">farshadnassiri@gmail.com</a> directly.</p>';
+            status.innerHTML = '<h4>That did not go through.</h4>' +
+              '<p class="small muted">Nothing you typed has been lost — it is still in the form. ' +
+              'Please try once more, or send the same details straight to ' +
+              '<a class="link-arrow" href="mailto:farshadnassiri@gmail.com">farshadnassiri@gmail.com</a>.</p>';
+            status.scrollIntoView({ block: 'nearest' });
           }
         }).finally(function () {
           if (btn) { btn.disabled = false; btn.textContent = 'Send request'; }

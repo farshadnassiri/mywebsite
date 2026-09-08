@@ -211,6 +211,11 @@
             </div>
           </div>
 
+          <!-- Honeypot: real people never see this, bots fill it in and the
+               submission is discarded. Named for Formspree's convention. -->
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
+                 class="sr-only">
+
           <div class="btn-row mt-4">
             <button class="btn btn--primary btn--lg" type="submit">Send request</button>
             <span class="note">No obligation, no mailing list, no follow-up sequence.</span>

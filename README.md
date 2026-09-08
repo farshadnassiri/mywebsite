@@ -130,15 +130,20 @@ assets so pages work at any depth.
 
 ## Configuration
 
-**Contact form** — `assets/js/config.js`:
+**Contact form** — `assets/js/config.js` holds `formEndpoint`, currently a
+Formspree form. Submissions arrive by email and are listed in the Formspree
+dashboard.
 
-```js
-window.SITE_CONFIG = { formEndpoint: '', email: '…', calendarUrl: '' };
-```
+The handler in `assets/js/site.js` posts the whole form as `FormData` and adds
+two fields of its own: `_subject` (`Company — Service`, so enquiries are
+triageable from the inbox list) and `_replyto` (so Reply goes to the sender).
+A hidden `_gotcha` honeypot on the form discards bot submissions. On success the
+form resets and confirms; on failure it keeps what was typed and offers the
+email address instead.
 
-Leave `formEndpoint` empty and the form opens a pre-filled email draft. Paste a
-[Formspree](https://formspree.io) / Basin / Netlify Forms endpoint and it posts
-there instead, with inline success and failure states. Nothing else changes.
+The endpoint is public by design — it lives in client-side code, like every
+static-site form service. To swap provider, replace the URL; to go back to the
+email-draft fallback, empty it.
 
 **Canonical URLs and sitemap** — set `SITE_URL` at the top of `tools/build.js`
 to your public origin (e.g. `https://farshadnassiri.com`) and rebuild. Absolute
