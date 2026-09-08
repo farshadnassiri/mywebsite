@@ -113,7 +113,7 @@
     }
     var q = qs.get('q');
     if (q) {
-      var ta = form.querySelector('[name="question"]');
+      var ta = form.querySelector('[name="problem"]');
       if (ta && !ta.value) ta.value = decodeURIComponent(q);
     }
 
