@@ -170,6 +170,43 @@
     });
   }
 
+  /* ---------- Tabs ---------- */
+  document.querySelectorAll('[role="tablist"]').forEach(function (list) {
+    var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
+
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        var panel = document.getElementById(t.getAttribute('aria-controls'));
+        if (panel) panel.hidden = !on;
+      });
+      /* Charts in the panel just revealed were never measured while hidden. */
+      window.dispatchEvent(new Event('tabshown'));
+    }
+
+    list.addEventListener('click', function (e) {
+      var t = e.target.closest('[role="tab"]');
+      if (t) select(t);
+    });
+
+    list.addEventListener('keydown', function (e) {
+      var i = tabs.indexOf(document.activeElement);
+      if (i < 0) return;
+      var next = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : -1;
+      if (next < 0) return;
+      e.preventDefault();
+      var t = tabs[(next + tabs.length) % tabs.length];
+      t.focus();
+      select(t);
+    });
+
+    tabs.forEach(function (t) {
+      t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1;
+    });
+  });
+
   /* ---------- Solution filter ---------- */
   var filterRow = document.querySelector('[data-filter-row]');
   if (filterRow) {

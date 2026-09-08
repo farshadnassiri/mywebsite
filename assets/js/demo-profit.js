@@ -19,9 +19,9 @@
   ];
 
   var BASIS_NOTES = {
-    revenue: 'The default almost everywhere, because it needs no data. It quietly assumes big accounts consume support in proportion to what they pay — which is the assumption most often wrong.',
-    hours: 'Allocates by the time your team actually spends. This is where labour-intensive accounts stop hiding behind their invoice size.',
-    effort: 'A blend of delivery hours and support load. Closest to reality for service businesses where a demanding client absorbs management attention as well as delivery time.'
+    revenue: 'The default almost everywhere, because it needs no extra records. It quietly assumes a client uses your team in proportion to what they pay you — which is the assumption most often wrong.',
+    hours: 'Shares overhead by the time your team actually spends. This is where labour-hungry accounts stop hiding behind a large invoice.',
+    effort: 'Hours plus the support load a client generates. Closest to reality where a demanding client absorbs management attention as well as delivery time.'
   };
 
   var basis = 'revenue';
@@ -54,6 +54,18 @@
   }
 
   var barsMount = FN.mount($('pf-bars'), function () { return document.createElement('div'); });
+  var concMount = FN.mount($('pf-conc-chart'), function () { return document.createElement('div'); });
+
+  /* What total company profit becomes if one client leaves, given that only part
+     of the overhead they carried can actually be removed. */
+  function ifClientLeft(idx, pool, avoidable) {
+    var rows = compute(CLIENTS, pool);
+    var before = rows.filter(function (r) { return r.name === CLIENTS[idx].name; })[0];
+    var removedOh = before.oh * avoidable;
+    var remaining = CLIENTS.filter(function (_, i) { return i !== idx; });
+    var newOp = remaining.reduce(function (a, c) { return a + c.rev - c.dc; }, 0) - (pool - removedOh);
+    return { before: before, removedOh: removedOh, newOp: newOp };
+  }
 
   function update() {
     var pool = Math.max(0, +$('pf-oh').value || 0);
@@ -126,24 +138,19 @@
     var dropIdx = sel.value === '' ? -1 : +sel.value;
     var out = $('pf-drop-out');
     if (dropIdx >= 0) {
-      var dropped = CLIENTS[dropIdx];
-      var before = compute(CLIENTS, pool).filter(function (r) { return r.name === dropped.name; })[0];
-      var removedOh = before.oh * avoidable;
-      var remaining = CLIENTS.filter(function (_, i) { return i !== dropIdx; });
-      var newPool = pool - removedOh;
-      var newOp = remaining.reduce(function (a, c) { return a + c.rev - c.dc; }, 0) - newPool;
-      var diff = newOp - op;
+      var sim = ifClientLeft(dropIdx, pool, avoidable);
+      var diff = sim.newOp - op;
       out.innerHTML =
-        '<p class="xsmall"><strong>' + dropped.name + '</strong> currently shows ' +
-        '<span class="' + (before.net >= 0 ? '' : 'neg') + '">' + FN.usd(before.net) + '</span> of net profit ' +
-        '(' + before.margin.toFixed(1) + '% margin).</p>' +
-        '<p class="xsmall mt-1">Losing them removes ' + FN.usd(before.gross) + ' of contribution and only ' +
-        FN.usd(removedOh) + ' of overhead. Company profit goes ' +
+        '<p class="xsmall"><strong>' + CLIENTS[dropIdx].name + '</strong> currently shows ' +
+        '<span class="' + (sim.before.net >= 0 ? '' : 'neg') + '">' + FN.usd(sim.before.net) + '</span> of profit ' +
+        '(' + sim.before.margin.toFixed(1) + '% margin).</p>' +
+        '<p class="xsmall mt-1">Losing them takes away ' + FN.usd(sim.before.gross) + ' of contribution but only ' +
+        FN.usd(sim.removedOh) + ' of overhead. Total profit moves ' +
         '<strong class="' + (diff >= 0 ? 'pos' : 'neg') + '">' + FN.sgn(diff, FN.usd) + '</strong> to ' +
-        FN.usd(newOp) + '.</p>' +
+        FN.usd(sim.newOp) + '.</p>' +
         (diff < 0
-          ? '<p class="xsmall mt-1"><strong>You would be worse off.</strong> Their allocated overhead does not leave with them — it lands on everyone else. Reprice or reduce cost to serve before you resign an account.</p>'
-          : '<p class="xsmall mt-1">This one genuinely destroys value, even after allowing for overhead that stays behind.</p>');
+          ? '<p class="xsmall mt-1"><strong>You would be worse off.</strong> Their share of the overhead does not leave with them — it lands on everyone else. Reprice or cut the cost of serving them before you resign the account.</p>'
+          : '<p class="xsmall mt-1">This one genuinely costs you money, even after allowing for the overhead that stays behind.</p>');
     } else {
       out.innerHTML = '<p class="xsmall muted mt-0">Pick a client to see what losing them actually does to total profit.</p>';
     }
@@ -182,6 +189,68 @@
       ' a year, from clients you already have and are already serving.</p>');
 
     $('pf-insight').innerHTML = bits.join('');
+
+    /* ---------- Tab 2: reading the table ---------- */
+    var byRevPerHour = rows.slice().sort(function (a, b) { return b.revPerHour - a.revPerHour; });
+    var topRate = byRevPerHour[0], bottomRate = byRevPerHour[byRevPerHour.length - 1];
+    $('pf-table-insight').innerHTML =
+      '<p>Your best account earns <strong>' + FN.usd(topRate.revPerHour) + ' an hour</strong> (' +
+      topRate.name + '); your worst earns <strong>' + FN.usd(bottomRate.revPerHour) + '</strong> (' +
+      bottomRate.name + '). Same team, same overhead, ' +
+      (bottomRate.revPerHour ? (topRate.revPerHour / bottomRate.revPerHour).toFixed(1) + ' times' : 'a large multiple') +
+      ' the return. Nothing in the sales ledger shows you this.</p>' +
+      '<p>The company average is ' + FN.usd(totRev / totHrs) + ' an hour. Any account below it is ' +
+      'being subsidised by the ones above — which is a decision worth making deliberately rather ' +
+      'than by accident.</p>';
+
+    /* ---------- Tab 3: concentration and the leave test ---------- */
+    var P2 = FN.palette();
+    var byRev = CLIENTS.slice().sort(function (a, b) { return b.rev - a.rev; });
+    var top3Rev = byRev.slice(0, 3).reduce(function (a, c) { return a + c.rev; }, 0);
+    concMount.update(FN.hbars({
+      padLeft: 140, rowH: 28,
+      items: byRev.map(function (c, i) {
+        return {
+          label: c.name, value: c.rev / totRev * 100,
+          color: i < 3 ? P2.warn : P2.accent
+        };
+      }),
+      vFmt: function (v) { return v.toFixed(1) + '%'; }
+    }));
+
+    $('pf-risk-tbody').innerHTML = CLIENTS.map(function (c, i) {
+      var sim = ifClientLeft(i, pool, avoidable);
+      var diff = sim.newOp - op;
+      return '<tr' + (diff < 0 ? '' : ' class="is-flagged"') + '>' +
+        '<td><strong>' + c.name + '</strong></td>' +
+        '<td class="n">' + FN.usd(c.rev) + '</td>' +
+        '<td class="n">' + FN.usd(sim.before.gross) + '</td>' +
+        '<td class="n">' + FN.usd(sim.removedOh) + '</td>' +
+        '<td class="n"><strong>' + FN.usd(sim.newOp) + '</strong></td>' +
+        '<td class="n ' + (diff >= 0 ? 'pos' : 'neg') + '">' + FN.sgn(diff, FN.usd) + '</td>' +
+      '</tr>';
+    }).join('');
+
+    var helpful = CLIENTS.map(function (c, i) {
+      return { name: c.name, diff: ifClientLeft(i, pool, avoidable).newOp - op };
+    }).filter(function (x) { return x.diff > 0; });
+
+    $('pf-risk-insight').innerHTML =
+      '<p>Your three largest clients are <strong>' + (top3Rev / totRev * 100).toFixed(0) +
+      '% of revenue</strong>. Losing the biggest one would take ' +
+      FN.usdC(ifClientLeft(CLIENTS.indexOf(byRev[0]), pool, avoidable).newOp - op) +
+      ' off profit — and the overhead it was carrying would simply move onto everyone else.</p>' +
+      (helpful.length
+        ? '<p>Only <strong>' + helpful.length + ' account' + (helpful.length > 1 ? 's' : '') +
+          '</strong> would leave you better off by going: ' +
+          helpful.map(function (h) { return h.name; }).join(', ') +
+          '. Every other loss-maker on this list is still contributing something towards overhead ' +
+          'you would keep paying anyway — which is exactly why “fire the unprofitable clients” is ' +
+          'usually the wrong instruction.</p>'
+        : '<p>At this setting, <strong>no client is worth losing</strong>. Even the loss-makers ' +
+          'contribute towards overhead you would keep paying. The answer for those accounts is a ' +
+          'price increase or a smaller scope, not a resignation letter.</p>') +
+      '<p class="small muted">Rows highlighted in red are the ones you would be better off without.</p>';
   }
 
   $('pf-basis').addEventListener('click', function (e) {

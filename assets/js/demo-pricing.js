@@ -51,10 +51,10 @@
     $('p-dp-val').textContent = FN.sgn(s.dp * 100, function (v) { return v.toFixed(0) + '%'; });
     $('p-el-val').textContent = s.el.toFixed(1);
     $('p-el-note').textContent = s.el === 0
-      ? 'No volume response — you own the relationship.'
-      : s.el < 0.7 ? 'Low: differentiated, sticky, or price is not the reason they buy.'
-      : s.el <= 1.5 ? 'Moderate: a 1% rise costs about ' + s.el.toFixed(1) + '% of volume.'
-      : 'High: commodity-like, customers shop on price.';
+      ? 'Nobody leaves — price is not why they buy from you.'
+      : s.el < 0.7 ? 'Low: customers stay. You are hard to replace.'
+      : s.el <= 1.5 ? 'Moderate: a 1% rise loses about ' + s.el.toFixed(1) + '% of your volume.'
+      : 'High: customers shop around and will move on price.';
 
     $('p-rev').textContent = FN.usdC(now.rev);
     $('p-rev-d').innerHTML = delta(now.rev, base.rev, FN.usdC);
@@ -126,37 +126,100 @@
     var bits = [];
 
     if (Math.abs(s.dp) < 0.005) {
-      bits.push('<p>At today’s price you earn <strong>' + FN.usd(base.cm, 2) + ' of contribution per unit</strong> ' +
-        'and <strong>' + FN.usdC(base.op) + '</strong> of operating profit a month — a ' +
-        (base.rev ? (base.op / base.rev * 100).toFixed(1) : '0') + '% margin. Move the price slider to test a change.</p>');
+      bits.push('<p>At today’s price you keep <strong>' + FN.usd(base.cm, 2) + ' from every sale</strong> ' +
+        'once you have paid to deliver it, which leaves <strong>' + FN.usdC(base.op) + '</strong> of profit ' +
+        'a month — a ' + (base.rev ? (base.op / base.rev * 100).toFixed(1) : '0') +
+        '% margin. Move the price slider to test a change.</p>');
     } else if (s.dp > 0) {
-      bits.push('<p>Raising price <strong>' + (s.dp * 100).toFixed(0) + '%</strong> lifts contribution per unit from ' +
-        FN.usd(base.cm, 2) + ' to <strong>' + FN.usd(now.cm, 2) + '</strong>. That is the whole argument: you keep more of every ' +
-        'sale, so you need fewer of them.</p>');
-      bits.push('<p><strong>You could lose up to ' + maxLoss.toFixed(1) + '% of volume</strong> and still be no worse off. ' +
-        'Your sensitivity assumption says you would lose ' + assumedLoss.toFixed(1) + '% — ' +
+      bits.push('<p>Raising price <strong>' + (s.dp * 100).toFixed(0) + '%</strong> lifts what you keep on each ' +
+        'sale from ' + FN.usd(base.cm, 2) + ' to <strong>' + FN.usd(now.cm, 2) + '</strong>. That is the whole ' +
+        'argument: you keep more from every sale, so you need fewer of them.</p>');
+      bits.push('<p><strong>You could lose up to ' + maxLoss.toFixed(1) + '% of your customers</strong> and still ' +
+        'be no worse off than today. Your own assumption says you would lose ' + assumedLoss.toFixed(1) + '% — ' +
         (assumedLoss < maxLoss
-          ? 'comfortably inside the buffer, so this price rise pays even if you are meaningfully wrong about how customers react.'
-          : 'more than the break-even loss, so on this assumption the increase destroys profit. The judgement call is whether that sensitivity is real or defensive.') +
+          ? 'comfortably inside that cushion, so the increase still pays even if you are badly wrong about how customers react.'
+          : 'more than you can afford, so on this assumption the increase costs you money. The question is whether customers really are that sensitive, or whether that is nerves.') +
         '</p>');
     } else {
-      bits.push('<p>Cutting price <strong>' + Math.abs(s.dp * 100).toFixed(0) + '%</strong> drops contribution per unit to <strong>' +
-        FN.usd(now.cm, 2) + '</strong>. To stand still on profit you now need <strong>' +
-        (base.cm > 0 && now.cm > 0 ? ((base.cm / now.cm - 1) * 100).toFixed(1) + '% more volume' : 'volume you cannot get') +
+      bits.push('<p>Cutting price <strong>' + Math.abs(s.dp * 100).toFixed(0) + '%</strong> drops what you keep on ' +
+        'each sale to <strong>' + FN.usd(now.cm, 2) + '</strong>. Just to end up where you started you would need ' +
+        '<strong>' + (base.cm > 0 && now.cm > 0 ? ((base.cm / now.cm - 1) * 100).toFixed(1) + '% more sales' : 'more sales than you can win') +
         '</strong> — every month, permanently.</p>');
     }
 
-    var levers = [{ n: 'price', v: lp }, { n: 'volume', v: lv }, { n: 'variable cost', v: lc }, { n: 'fixed cost', v: lf }]
-      .sort(function (a, b) { return b.v - a.v; });
-    bits.push('<p>On your numbers, a 1% move in <strong>' + levers[0].n + '</strong> is worth ' + FN.usdC(levers[0].v) +
-      ' a month — <strong>' + (levers[3].v ? (levers[0].v / levers[3].v).toFixed(1) + '×' : 'far') +
-      ' more</strong> than the same 1% in ' + levers[3].n + '. Most cost-cutting programmes chase the smallest lever on this list.</p>');
+    var levers = [
+      { n: 'your price', v: lp }, { n: 'the number you sell', v: lv },
+      { n: 'what each one costs', v: lc }, { n: 'your fixed costs', v: lf }
+    ].sort(function (a, b) { return b.v - a.v; });
+    bits.push('<p>A 1% improvement in <strong>' + levers[0].n + '</strong> is worth ' + FN.usdC(levers[0].v) +
+      ' a month — <strong>' + (levers[3].v ? (levers[0].v / levers[3].v).toFixed(1) + ' times' : 'far') +
+      ' more</strong> than the same 1% off ' + levers[3].n + '. Most cost-cutting efforts go after the smallest ' +
+      'item on that list.</p>');
 
     if (now.op < 0) {
       bits.push('<p class="neg"><strong>This scenario loses money.</strong> At ' + FN.num(Math.round(now.Q)) +
-        ' units you are below the break-even of ' + (isFinite(now.be) ? FN.num(Math.ceil(now.be)) : '—') + '.</p>');
+        ' units you are below the ' + (isFinite(now.be) ? FN.num(Math.ceil(now.be)) : '—') +
+        ' you need just to cover your fixed costs.</p>');
     }
     $('p-insight').innerHTML = bits.join('');
+
+    /* ---------- Tab 2: every price, compared ---------- */
+    var steps = [-10, -5, 0, 5, 10, 15, 20];
+    $('p-scen-tbody').innerHTML = steps.map(function (d) {
+      var m = model(s, d / 100);
+      var vs = m.op - base.op;
+      var isNow = d === Math.round(s.dp * 100);
+      return '<tr' + (isNow ? ' style="background:var(--accent-soft)"' : '') + '>' +
+        '<td><strong>' + (d > 0 ? '+' : '') + d + '%</strong>' + (isNow ? ' <span class="badge badge--accent">you</span>' : '') + '</td>' +
+        '<td class="n">' + FN.usd(m.P, 2) + '</td>' +
+        '<td class="n">' + FN.num(Math.round(m.Q)) + '</td>' +
+        '<td class="n">' + FN.usd(m.rev) + '</td>' +
+        '<td class="n">' + m.gmPct.toFixed(1) + '%</td>' +
+        '<td class="n"><strong>' + FN.usd(m.op) + '</strong></td>' +
+        '<td class="n ' + (vs > 0 ? 'pos' : vs < 0 ? 'neg' : 'muted') + '">' + (d === 0 ? '—' : FN.sgn(vs, FN.usd)) + '</td>' +
+      '</tr>';
+    }).join('');
+
+    var bestStep = steps.map(function (d) { return { d: d, op: model(s, d / 100).op }; })
+      .sort(function (a, b) { return b.op - a.op; })[0];
+    var drop10 = model(s, -0.10);
+    $('p-scen-insight').innerHTML =
+      '<p>Across this whole range the best outcome is at <strong>' +
+      (bestStep.d > 0 ? '+' : '') + bestStep.d + '%</strong>, worth ' + FN.usdC(bestStep.op) +
+      ' a month against ' + FN.usdC(base.op) + ' today. ' +
+      (bestStep.d > 0
+        ? 'Every row above your current price earns more than the one below it — the volume you lose ' +
+          'is worth less than the margin you keep.'
+        : 'On these assumptions your customers are sensitive enough that holding or cutting price wins.') +
+      '</p>' +
+      '<p><strong>Discounting is the expensive row.</strong> Cutting 10% takes profit to ' +
+      FN.usdC(drop10.op) + ' — ' +
+      (base.op > 0 && drop10.op < base.op
+        ? 'a ' + Math.round((1 - drop10.op / base.op) * 100) + '% fall'
+        : 'a worse position') +
+      ' — and you would have to sell ' +
+      (drop10.cm > 0 ? FN.num(Math.round((base.gp / drop10.cm) - s.Q)) + ' more units every month' : 'volume you cannot reach') +
+      ' just to stand still. That is the real cost of the discount your largest customer keeps asking for.</p>';
+
+    /* ---------- Tab 3: which lever pays ---------- */
+    var ranked = [
+      { n: 'raising price 1%', v: lp, why: 'goes straight to the bottom line — nothing else changes' },
+      { n: 'selling 1% more', v: lv, why: 'you also pay to deliver the extra work' },
+      { n: 'cutting unit cost 1%', v: lc, why: 'worth having, but usually the hardest to actually do' },
+      { n: 'cutting fixed costs 1%', v: lf, why: 'the smallest lever, and the one most often chosen first' }
+    ].sort(function (a, b) { return b.v - a.v; });
+
+    $('p-lev-insight').innerHTML =
+      '<p>On your numbers, <strong>' + ranked[0].n + '</strong> is worth <strong>' + FN.usdC(ranked[0].v) +
+      ' a month</strong> — ' + ranked[0].why + '. The same 1% off ' +
+      (ranked[3].n.indexOf('fixed') >= 0 ? 'your fixed costs' : ranked[3].n) + ' is worth ' + FN.usdC(ranked[3].v) +
+      (ranked[3].v ? ', roughly ' + (ranked[0].v / ranked[3].v).toFixed(1) + ' times less' : '') + '.</p>' +
+      '<p>This ordering is stable across almost every small business, and it is almost always the ' +
+      'reverse of where the effort goes. Cost-cutting programmes feel decisive and land on the ' +
+      'smallest lever; a price conversation feels risky and is worth several times more. ' +
+      '<strong>Doing all four at once — 1% each — would be worth ' +
+      FN.usdC(lp + lv + lc + lf) + ' a month</strong>, or ' + FN.usdC((lp + lv + lc + lf) * 12) +
+      ' a year, without winning a single new customer.</p>';
   }
 
   inputs.forEach(function (i) { i.addEventListener('input', update); });

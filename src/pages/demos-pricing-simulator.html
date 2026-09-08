@@ -1,22 +1,34 @@
 <!--META {
   "slug": "demos/pricing-simulator",
-  "title": "Pricing & margin simulator — Farshad Nassiri",
-  "desc": "Move price and volume assumptions and watch operating profit, break-even and margin respond. A working pricing model, not a slide.",
+  "title": "Are we charging enough? — worked example",
+  "desc": "What a price change does to profit, how much volume you could afford to lose, and which of your four levers is actually worth pulling.",
   "scripts": ["viz.js", "demo-pricing.js"]
 }-->
 
 <section class="pagehead">
   <div class="wrap wrap--wide">
-    <p class="crumb"><a href="{{base}}demos.html">Interactive demos</a><span>/</span>Pricing &amp; margin</p>
-    <div class="flex between" style="align-items:flex-start">
+    <p class="crumb"><a href="{{base}}demos.html">Worked examples</a><span>/</span>Pricing</p>
+    <div class="split">
       <div>
-        <h1>What actually happens if you raise the price?</h1>
+        <span class="eyebrow eyebrow--accent">The owner’s question</span>
+        <h1>“Are we charging enough — and what happens if I put prices up?”</h1>
         <p class="lede">
-          Every owner has this argument with themselves. It is not a philosophical question —
-          it is arithmetic with one uncertain input. Move the sliders and watch the answer.
+          Every owner has this argument with themselves and settles it on instinct. It is not a
+          matter of nerve. It is arithmetic with one uncertain input, and the useful question is not
+          “what will customers do?” but <strong>“how wrong can I be and still be better off?”</strong>
         </p>
       </div>
-      <span class="badge badge--warn" style="flex:none">Synthetic data</span>
+      <div class="card" style="background:var(--surface-2)">
+        <h4>What you are looking at</h4>
+        <p class="small muted mt-2">
+          A business selling <strong>1,200 units a month at $125</strong>, costing $74 each to
+          deliver, with $48,000 of monthly fixed costs. That is $150,000 of sales and an 8.8%
+          margin — an entirely ordinary small business.
+        </p>
+        <p class="small muted mt-2">
+          Enter your own figures on the left. “Unit” can be a job, a contract, an hour or a product.
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -25,21 +37,20 @@
   <div class="wrap wrap--wide">
     <div class="demo-layout">
 
-      <!-- ---------- Controls ---------- -->
       <aside class="demo-side">
         <div class="card" style="gap:0">
           <h4 class="mb-3">Your business</h4>
           <div class="controls">
-            <div class="field"><label for="p-price">Average selling price</label>
+            <div class="field"><label for="p-price">Average price</label>
               <input id="p-price" type="number" value="125" min="1" step="1"></div>
             <div class="field"><label for="p-vol">Units sold per month</label>
               <input id="p-vol" type="number" value="1200" min="1" step="10"></div>
-            <div class="field"><label for="p-vc">Variable cost per unit</label>
+            <div class="field"><label for="p-vc">Cost per unit</label>
               <input id="p-vc" type="number" value="74" min="0" step="1">
-              <span class="field__hint">Materials, delivery, direct labour, payment fees.</span></div>
+              <span class="field__hint">Materials, delivery, direct labour, payment fees — anything that only happens because you made the sale.</span></div>
             <div class="field"><label for="p-fc">Fixed costs per month</label>
               <input id="p-fc" type="number" value="48000" min="0" step="500">
-              <span class="field__hint">Salaries, rent, software, everything that does not move with volume.</span></div>
+              <span class="field__hint">Wages, rent, insurance — everything you pay whether or not you sell anything.</span></div>
           </div>
         </div>
 
@@ -51,84 +62,142 @@
               <input id="p-dp" type="range" min="-20" max="30" step="1" value="10">
             </div>
             <div class="ctrl">
-              <div class="ctrl__head"><span class="ctrl__label">Customer sensitivity</span><span class="ctrl__val" id="p-el-val">1.2</span></div>
+              <div class="ctrl__head"><span class="ctrl__label">How price-sensitive are customers</span><span class="ctrl__val" id="p-el-val">1.2</span></div>
               <input id="p-el" type="range" min="0" max="3" step="0.1" value="1.2">
               <span class="ctrl__hint" id="p-el-note"></span>
             </div>
           </div>
           <div class="callout callout--box mt-3" style="padding:14px 16px">
             <p class="xsmall muted mt-0">
-              Sensitivity is the one number nobody knows precisely. That is exactly why it belongs on a
-              slider — the useful question is not “what is it?” but “how wrong can I be and still be right?”
+              Nobody knows this number precisely, which is exactly why it belongs on a slider.
+              Set it pessimistically and see whether the decision still holds.
             </p>
           </div>
         </div>
       </aside>
 
-      <!-- ---------- Output ---------- -->
       <div class="stack-lg">
         <div class="kpi-grid">
-          <div class="kpi"><div class="kpi__label">Revenue / month</div><div class="kpi__val" id="p-rev">—</div><div class="kpi__delta" id="p-rev-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Sales / month</div><div class="kpi__val" id="p-rev">—</div><div class="kpi__delta" id="p-rev-d">—</div></div>
           <div class="kpi"><div class="kpi__label">Gross margin</div><div class="kpi__val" id="p-gm">—</div><div class="kpi__delta" id="p-gm-d">—</div></div>
-          <div class="kpi"><div class="kpi__label">Operating profit</div><div class="kpi__val" id="p-op">—</div><div class="kpi__delta" id="p-op-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Profit</div><div class="kpi__val" id="p-op">—</div><div class="kpi__delta" id="p-op-d">—</div></div>
           <div class="kpi"><div class="kpi__label">Units sold</div><div class="kpi__val" id="p-units">—</div><div class="kpi__delta" id="p-units-d">—</div></div>
-          <div class="kpi"><div class="kpi__label">Break-even units</div><div class="kpi__val" id="p-be">—</div><div class="kpi__delta" id="p-be-d">—</div></div>
-          <div class="kpi"><div class="kpi__label">Margin of safety</div><div class="kpi__val" id="p-mos">—</div><div class="kpi__delta">before you lose money</div></div>
+          <div class="kpi"><div class="kpi__label">Units to break even</div><div class="kpi__val" id="p-be">—</div><div class="kpi__delta" id="p-be-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Safety margin</div><div class="kpi__val" id="p-mos">—</div><div class="kpi__delta">before you lose money</div></div>
         </div>
 
-        <div class="card">
-          <div class="flex between mb-3">
-            <h4>Where profit is decomposed</h4>
-            <span class="badge">Price effect vs. volume effect</span>
-          </div>
-          <div class="chart" id="p-waterfall"></div>
-          <p class="small muted mt-2">
-            A price change pulls in two directions at once. The bar chart separates them, because
-            “revenue went up” and “this was a good decision” are not the same statement.
-          </p>
+        <div class="tabs" role="tablist" aria-label="Views">
+          <button role="tab" id="tab-imp" aria-controls="p-imp" aria-selected="true">Profit impact</button>
+          <button role="tab" id="tab-scen" aria-controls="p-scen" aria-selected="false">Every price, compared</button>
+          <button role="tab" id="tab-lev" aria-controls="p-lev" aria-selected="false">Which lever pays</button>
         </div>
 
-        <div class="grid g-2">
+        <!-- Tab 1 -->
+        <div class="tabpanel stack-lg" id="p-imp" role="tabpanel" aria-labelledby="tab-imp">
           <div class="card">
-            <h4 class="mb-3">Profit across the whole price range</h4>
-            <div class="chart" id="p-curve"></div>
-            <p class="small muted mt-2">Operating profit at every price change, holding your sensitivity assumption constant.</p>
-          </div>
-          <div class="card">
-            <h4 class="mb-3">Which 1% is worth the most?</h4>
-            <div class="chart" id="p-levers"></div>
+            <div class="flex between mb-3">
+              <h4>Where the profit comes from, and where it goes</h4>
+              <span class="badge">Price gain vs. volume loss</span>
+            </div>
+            <div class="chart" id="p-waterfall"></div>
             <p class="small muted mt-2">
-              Monthly profit impact of a 1% improvement in each lever, at your current settings.
-              Price almost always wins — and is almost always the last one anybody touches.
+              A price rise pulls in two directions at once: you earn more on every sale, and you
+              make fewer of them. Separating the two is the whole argument — “sales went up” and
+              “this was a good decision” are not the same statement.
             </p>
           </div>
-        </div>
-
-        <div class="insight">
-          <div class="insight__label">◆ CFO reading</div>
-          <div id="p-insight"></div>
-        </div>
-
-        <div class="card">
-          <h4>What this looks like as an engagement</h4>
-          <p class="small muted mt-1">
-            The demo assumes one product and one cost per unit. Real pricing work starts by
-            establishing what a unit actually costs you — including the overhead nobody allocates —
-            then builds this model on your product mix, your customer segments and your contract
-            terms. The output is a price decision you can defend to a customer, not a percentage.
-          </p>
-          <div class="btn-row mt-3">
-            <a class="btn btn--primary" href="{{base}}contact.html?service=Costing%20%26%20Pricing">Request a pricing review</a>
-            <a class="btn btn--ghost" href="{{base}}services.html#costing-pricing">The service behind this</a>
+          <div class="insight">
+            <div class="insight__label">◆ What this means</div>
+            <div id="p-insight"></div>
           </div>
         </div>
 
-        <div class="callout callout--box callout--warn">
-          <h4>Have a different question?</h4>
+        <!-- Tab 2 -->
+        <div class="tabpanel stack-lg" id="p-scen" role="tabpanel" aria-labelledby="tab-scen" hidden>
+          <div class="card">
+            <h4 class="mb-3">Profit at every price</h4>
+            <div class="chart" id="p-curve"></div>
+            <p class="small muted mt-2">
+              Profit at each price change, holding your sensitivity assumption steady. The curve
+              being flat near the top is the useful part: it means being slightly wrong about the
+              perfect price costs you very little.
+            </p>
+          </div>
+          <div class="card">
+            <h4 class="mb-3">The same thing as a table</h4>
+            <div class="table-wrap">
+              <table class="data">
+                <thead><tr>
+                  <th>Price change</th><th class="n">New price</th><th class="n">Units</th>
+                  <th class="n">Sales</th><th class="n">Gross margin</th><th class="n">Profit</th><th class="n">vs today</th>
+                </tr></thead>
+                <tbody id="p-scen-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="insight">
+            <div class="insight__label">◆ What this means</div>
+            <div id="p-scen-insight"></div>
+          </div>
+        </div>
+
+        <!-- Tab 3 -->
+        <div class="tabpanel stack-lg" id="p-lev" role="tabpanel" aria-labelledby="tab-lev" hidden>
+          <div class="card">
+            <h4 class="mb-3">Improve each of these by 1%. Which is worth the most?</h4>
+            <div class="chart" id="p-levers"></div>
+            <p class="small muted mt-2">
+              Monthly profit from a 1% improvement in each lever, at your current numbers.
+            </p>
+          </div>
+          <div class="insight">
+            <div class="insight__label">◆ What this means</div>
+            <div id="p-lev-insight"></div>
+          </div>
+        </div>
+
+        <!-- Coverage -->
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="coverage">
+            <div class="coverage__l">
+              <div class="meter">
+                <span class="meter__n">15%</span>
+                <span class="meter__t">of a pricing engagement</span>
+              </div>
+              <div class="meter__bar"><div class="meter__fill" style="width:15%"></div></div>
+              <p class="small muted mt-3">
+                This assumes one product at one cost. Almost no business is that simple — and the
+                hard part is not the arithmetic, it is establishing what a unit really costs before
+                any of it means anything.
+              </p>
+              <div class="btn-row mt-3">
+                <a class="btn btn--accent btn--sm" href="{{base}}contact.html?service=Costing%20%26%20Pricing">Request this for your business</a>
+              </div>
+            </div>
+            <div class="coverage__r">
+              <h4 class="mb-2">The other 85% is specific to you</h4>
+              <ul class="dashlist">
+                <li>Working out the true cost of each product, job or contract — including the overhead nobody currently allocates</li>
+                <li>Different prices and different sensitivity for each customer segment, rather than one blended figure</li>
+                <li>What your existing contracts, renewal dates and notice periods actually allow you to change</li>
+                <li>Where competitors genuinely sit, and where customers only believe they do</li>
+                <li>Which customers to raise first, by how much, and which to leave alone this year</li>
+                <li>Discount and volume-deal rules your sales conversations can follow without checking</li>
+                <li>The wording for the increase, and what to do when a large customer pushes back</li>
+              </ul>
+              <p class="small mt-3">
+                <a class="link-arrow" href="{{base}}services.html#costing-pricing">The full Costing &amp; Pricing service</a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout--box">
+          <h4>Before you change a price</h4>
           <p class="small muted">
-            If the decision you are weighing is not “what price”, tell me what it is. Short, focused
-            models like this one are how I usually start a conversation.
-            <a class="link-arrow" href="{{base}}contact.html">Send your question</a>
+            The figure that decides everything here is the cost per unit — and most businesses have
+            never established it properly.
+            <a class="link-arrow" href="{{base}}demos/profitability.html">See how that gets worked out</a>
           </p>
         </div>
       </div>

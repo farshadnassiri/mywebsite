@@ -11,7 +11,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Discuss your business — Farshad Nassiri">
 <meta property="og:description" content="Tell me the financial question you are trying to answer. Fixed-fee proposals, no obligation, and an honest referral if I am not the right fit.">
-<meta property="og:site_name" content="Farshad Nassiri — Tech-Enabled Finance">
+<meta property="og:site_name" content="Farshad Nassiri — Fractional CFO &amp; FP&amp;A">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="contact.html">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -39,11 +39,11 @@
   <div class="wrap nav__in">
     <a class="brand" href="index.html">
       <span class="brand__mark">FN</span>
-      <span>Farshad Nassiri<span class="brand__sub"> · Tech-Enabled Finance</span></span>
+      <span>Farshad Nassiri</span>
     </a>
     <nav class="nav__links" aria-label="Primary">
-      <a href="solutions.html">Solutions</a>
-      <a href="demos.html">Interactive demos</a>
+      <a href="solutions.html">Questions</a>
+      <a href="demos.html">Worked examples</a>
       <a href="services.html">Services</a>
       <a href="financial-health-review.html">Health Review</a>
       <a href="about.html">About</a>
@@ -64,8 +64,8 @@
   </div>
 </header>
 <div class="drawer" id="drawer">
-  <a href="solutions.html">Solutions</a>
-  <a href="demos.html">Interactive demos</a>
+  <a href="solutions.html">Questions</a>
+  <a href="demos.html">Worked examples</a>
   <a href="services.html">Services</a>
   <a href="financial-health-review.html">Financial Health Review</a>
   <a href="about.html">About</a>
@@ -80,8 +80,8 @@
     <h1>What financial question are you trying to answer?</h1>
     <p class="lede">
       One sentence is enough to start. The more specific the question, the more useful the first
-      reply will be — and if the honest answer is that you do not need me, you will get that instead
-      of a pitch.
+      reply will be — and if the honest answer is that you do not need me, you will get that
+      instead of a pitch.
     </p>
   </div>
 </section>
@@ -93,38 +93,35 @@
       <!-- Side rail -->
       <div class="stack-lg">
         <div class="card">
-          <h4>What happens after you send this</h4>
+          <h4>What happens next</h4>
           <ul class="checklist mt-2">
             <li>A reply within one business day, usually with two or three follow-up questions</li>
-            <li>A 30-minute call about the decision you are facing — not a capability presentation</li>
-            <li>If I can help: a fixed-fee proposal in writing with scope and delivery date</li>
-            <li>If I cannot: I will say so, and point you somewhere better</li>
+            <li>A 30-minute call about the decision you are facing</li>
+            <li>A fixed-fee proposal in writing, with scope and delivery date</li>
+            <li>An honest referral elsewhere if that serves you better</li>
           </ul>
         </div>
 
         <div class="card">
           <h4>Before you worry about the data</h4>
           <p class="small muted mt-2">
-            Nothing needs to be attached now. When it does, it is read-only exports —
-            <strong>never</strong> banking credentials — and names can be anonymised first.
-            An NDA can be signed before the first call.
-            <a class="link-arrow" href="about.html#trust">How data is handled</a>
+            Nothing needs to be attached now. When it does, it is read-only reports —
+            <strong>never</strong> banking credentials — and names can be replaced with codes
+            first. An NDA can be signed before the first call.
           </p>
+          <div class="card__foot">
+            <a class="link-arrow" href="about.html#trust">How your information is handled</a>
+          </div>
         </div>
 
         <div class="card">
           <h4>Rather just email?</h4>
           <p class="small muted mt-2">
-            <a class="link-arrow" href="mailto:farshadnassiri@gmail.com">farshadnassiri@gmail.com</a><br>
-            Same result. The form only exists so the first reply can be specific instead of generic.
+            <a class="link-arrow" href="mailto:farshadnassiri@gmail.com">farshadnassiri@gmail.com</a>
           </p>
-        </div>
-
-        <div class="callout callout--box">
-          <h4>Not ready to talk?</h4>
-          <p class="small muted">
-            Play with a <a class="link-arrow" href="demos.html">model</a> instead. It will tell you
-            more about how I think than any call would.
+          <p class="small muted mt-2">
+            Same result. The form exists only so the first reply can be specific rather than
+            generic.
           </p>
         </div>
       </div>
@@ -132,13 +129,15 @@
       <!-- Form -->
       <div class="card">
         <form data-lead-form novalidate>
-          <div class="grid g-2" style="gap:16px">
+
+          <p class="eyebrow" style="margin-bottom:.9rem">About you</p>
+          <div class="grid g-2" style="gap:16px 18px">
             <div class="field">
-              <label for="f-name">Your name *</label>
+              <label for="f-name">Your name <span class="muted">*</span></label>
               <input id="f-name" name="name" type="text" required autocomplete="name">
             </div>
             <div class="field">
-              <label for="f-email">Email *</label>
+              <label for="f-email">Email <span class="muted">*</span></label>
               <input id="f-email" name="email" type="email" required autocomplete="email">
             </div>
             <div class="field">
@@ -146,8 +145,44 @@
               <input id="f-company" name="company" type="text" autocomplete="organization">
             </div>
             <div class="field">
-              <label for="f-industry">What the business does</label>
-              <input id="f-industry" name="industry" type="text" placeholder="e.g. commercial cleaning, SaaS, wholesale">
+              <label for="f-role">Your role</label>
+              <select id="f-role" name="role">
+                <option value="">Select…</option>
+                <option>Owner or founder</option>
+                <option>Managing director / CEO</option>
+                <option>Finance manager or controller</option>
+                <option>Operations lead</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <hr class="hr mt-4 mb-3">
+
+          <p class="eyebrow" style="margin-bottom:.9rem">About the business</p>
+          <div class="grid g-2" style="gap:16px 18px">
+            <div class="field">
+              <label for="f-sector">Sector</label>
+              <select id="f-sector" name="sector">
+                <option value="">Select…</option>
+                <option>Professional services / agency</option>
+                <option>Construction &amp; trades</option>
+                <option>Manufacturing</option>
+                <option>Wholesale &amp; distribution</option>
+                <option>Retail &amp; e-commerce</option>
+                <option>Hospitality &amp; food</option>
+                <option>Healthcare &amp; clinics</option>
+                <option>Logistics &amp; transport</option>
+                <option>Property &amp; real estate</option>
+                <option>Software &amp; subscription</option>
+                <option>Education &amp; training</option>
+                <option>Non-profit</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-activity">What the business actually does</label>
+              <input id="f-activity" name="activity" type="text" placeholder="e.g. commercial cleaning contracts">
             </div>
             <div class="field">
               <label for="f-size">Annual revenue</label>
@@ -174,6 +209,27 @@
               </select>
             </div>
             <div class="field">
+              <label for="f-system">Accounting system</label>
+              <input id="f-system" name="accounting_system" type="text" placeholder="QuickBooks, Xero, Zoho, spreadsheets…">
+            </div>
+            <div class="field">
+              <label for="f-country">Country</label>
+              <input id="f-country" name="country" type="text" autocomplete="country-name">
+            </div>
+          </div>
+
+          <hr class="hr mt-4 mb-3">
+
+          <p class="eyebrow" style="margin-bottom:.9rem">What you need</p>
+          <div class="field">
+            <label for="f-question">The question you are trying to answer <span class="muted">*</span></label>
+            <textarea id="f-question" name="question" required
+              placeholder="For example: “We grew 30% last year and have less cash than we started with — I don’t understand why.” Or: “I think two of our five biggest clients lose us money but I can’t prove it.”"></textarea>
+            <span class="field__hint">Specific beats polished. This is the part I read first.</span>
+          </div>
+
+          <div class="grid g-2 mt-3" style="gap:16px 18px">
+            <div class="field">
               <label for="f-problem">Main area of concern</label>
               <select id="f-problem" name="problem_area">
                 <option value="">Select…</option>
@@ -193,30 +249,14 @@
                 <option value="">Not sure yet</option>
                 <option>Financial Health Review</option>
                 <option>Costing &amp; Pricing</option>
-                <option>FP&amp;A &amp; Forecasting</option>
+                <option>Planning &amp; Forecasting</option>
                 <option>Financial Controls Review</option>
-                <option>Remote Internal Audit</option>
-                <option>Finance Automation</option>
+                <option>Internal Audit</option>
+                <option>Management Reporting</option>
                 <option>Monthly Finance</option>
                 <option>Fractional CFO</option>
                 <option>Accounting &amp; Reporting Support</option>
-                <option>A custom model for a specific question</option>
               </select>
-            </div>
-          </div>
-
-          <div class="field mt-3">
-            <label for="f-question">The question you are trying to answer *</label>
-            <textarea id="f-question" name="question" required
-              placeholder="For example: “We grew 30% last year and have less cash than we started with — I don’t understand why.” Or: “I think two of our five biggest clients lose us money but I can’t prove it.”"></textarea>
-            <span class="field__hint">Specific beats polished. This is the part I actually read first.</span>
-          </div>
-
-          <div class="grid g-2 mt-3" style="gap:16px">
-            <div class="field">
-              <label for="f-system">Accounting system</label>
-              <input id="f-system" name="accounting_system" type="text" placeholder="QuickBooks, Xero, Zoho, spreadsheets…">
-              <span class="field__hint">Whatever it is, it works. This just saves a question later.</span>
             </div>
             <div class="field">
               <label for="f-timing">How soon</label>
@@ -228,11 +268,10 @@
                 <option>Exploring for now</option>
               </select>
             </div>
-          </div>
-
-          <div class="field mt-3">
-            <label for="f-source">How did you find this site?</label>
-            <input id="f-source" name="source" type="text" placeholder="Email, LinkedIn, referral, search…">
+            <div class="field">
+              <label for="f-source">How did you find this site?</label>
+              <input id="f-source" name="source" type="text" placeholder="Email, LinkedIn, referral, search…">
+            </div>
           </div>
 
           <div class="btn-row mt-4">
@@ -257,8 +296,8 @@
           <span>Farshad Nassiri</span>
         </a>
         <p class="small muted mt-2" style="max-width:34ch">
-          Finance leadership supported by technology — cash, profitability, pricing and
-          forecasting for founder-led businesses.
+          Cash, profitability, pricing and forecasting for founder-led
+          businesses. Written answers, with the workings attached.
         </p>
         <p class="small mt-2"><a class="link-arrow" href="mailto:farshadnassiri@gmail.com">farshadnassiri@gmail.com</a></p>
       </div>
@@ -267,7 +306,7 @@
         <nav>
           <a href="financial-health-review.html">Financial Health Review</a>
           <a href="solutions.html">Find your question</a>
-          <a href="demos.html">Interactive demos</a>
+          <a href="demos.html">Worked examples</a>
           <a href="contact.html">Discuss your business</a>
         </nav>
       </div>
@@ -275,10 +314,10 @@
         <h5>Services</h5>
         <nav>
           <a href="services.html#costing-pricing">Costing &amp; Pricing</a>
-          <a href="services.html#fpa">FP&amp;A &amp; Forecasting</a>
+          <a href="services.html#fpa">Planning &amp; Forecasting</a>
           <a href="services.html#controls">Financial Controls</a>
-          <a href="services.html#internal-audit">Remote Internal Audit</a>
-          <a href="services.html#automation">Finance Automation</a>
+          <a href="services.html#internal-audit">Internal Audit</a>
+          <a href="services.html#reporting">Management Reporting</a>
           <a href="services.html#fractional-cfo">Fractional CFO</a>
         </nav>
       </div>
@@ -293,14 +332,14 @@
       </div>
     </div>
     <p class="footer__legal">
-      All figures, dashboards and case examples on this site are built on
-      <strong>synthetic data</strong> created to demonstrate method, and are labelled as such.
+      All figures and worked examples on this site are built on a
+      <strong>constructed example business</strong>, not on client data, and are labelled as such.
       Advisory and internal-audit work described here is <strong>not</strong> a statutory or external
       audit, and does not constitute an assurance engagement, a legal opinion, or tax advice.
     </p>
     <div class="footer__base">
       <span>© <span data-year>2026</span> Farshad Nassiri. All rights reserved.</span>
-      <span>Built as a working demonstration — the site itself is part of the portfolio.</span>
+      <span>Fixed fees, agreed in writing before any work begins.</span>
     </div>
   </div>
 </footer>

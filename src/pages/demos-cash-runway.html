@@ -1,22 +1,35 @@
 <!--META {
   "slug": "demos/cash-runway",
-  "title": "13-week cash flow & runway model — Farshad Nassiri",
-  "desc": "A weekly cash forecast that reacts to collection delays, growth, payroll timing and a hiring decision. Find the trough week before it finds you.",
+  "title": "Will we run out of cash? — worked example",
+  "desc": "A thirteen-week cash picture that reacts to collection delays, growth, payroll timing and a hiring decision — with the specific week that gets tight and what would fix it.",
   "scripts": ["viz.js", "demo-cash.js"]
 }-->
 
 <section class="pagehead">
   <div class="wrap wrap--wide">
-    <p class="crumb"><a href="{{base}}demos.html">Interactive demos</a><span>/</span>Cash &amp; runway</p>
-    <div class="flex between" style="align-items:flex-start">
+    <p class="crumb"><a href="{{base}}demos.html">Worked examples</a><span>/</span>Cash</p>
+    <div class="split">
       <div>
-        <h1>Profitable businesses run out of cash on a Tuesday.</h1>
+        <span class="eyebrow eyebrow--accent">The owner’s question</span>
+        <h1>“Will the money be there when I need it?”</h1>
         <p class="lede">
-          Profit is an opinion formed monthly. Cash is a fact that arrives weekly. This model
-          projects thirteen weeks forward and tells you which week breaks — and by how much.
+          Profit is an opinion formed once a month. Cash is a fact that arrives every week.
+          Profitable businesses run out of money on a Tuesday because a quarterly bill landed next
+          to a payroll run — and the monthly accounts never showed it coming.
         </p>
       </div>
-      <span class="badge badge--warn" style="flex:none">Synthetic data</span>
+      <div class="card" style="background:var(--surface-2)">
+        <h4>What you are looking at</h4>
+        <p class="small muted mt-2">
+          A constructed business: <strong>$150,000 a month, growing 2%, customers paying in 45
+          days</strong>, payroll every second week and a $35,000 quarterly bill due in week 6.
+          Comfortably profitable on paper.
+        </p>
+        <p class="small muted mt-2">
+          Change anything on the left — especially the two sliders nobody thinks of as cash
+          decisions: <em>growth</em> and <em>days to get paid</em>.
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -27,46 +40,46 @@
 
       <aside class="demo-side">
         <div class="card" style="gap:0">
-          <h4 class="mb-3">Trading assumptions</h4>
+          <h4 class="mb-3">Trading</h4>
           <div class="controls">
             <div class="field"><label for="c-open">Cash in the bank today</label>
               <input id="c-open" type="number" value="120000" step="1000"></div>
-            <div class="field"><label for="c-rev">Monthly revenue</label>
+            <div class="field"><label for="c-rev">Monthly sales</label>
               <input id="c-rev" type="number" value="150000" step="1000"></div>
             <div class="ctrl">
               <div class="ctrl__head"><span class="ctrl__label">Monthly growth</span><span class="ctrl__val" id="c-g-val">2%</span></div>
               <input id="c-g" type="range" min="-5" max="12" step="0.5" value="2">
             </div>
             <div class="ctrl">
-              <div class="ctrl__head"><span class="ctrl__label">Days to get paid</span><span class="ctrl__val" id="c-dso-val">45 days</span></div>
+              <div class="ctrl__head"><span class="ctrl__label">Days customers take to pay</span><span class="ctrl__val" id="c-dso-val">45 days</span></div>
               <input id="c-dso" type="range" min="7" max="90" step="1" value="45">
-              <span class="ctrl__hint">Invoice date to money in the bank.</span>
+              <span class="ctrl__hint">From sending the invoice to money in the bank.</span>
             </div>
             <div class="ctrl">
               <div class="ctrl__head"><span class="ctrl__label">Gross margin</span><span class="ctrl__val" id="c-gm-val">42%</span></div>
               <input id="c-gm" type="range" min="10" max="90" step="1" value="42">
-              <span class="ctrl__hint">Everything below the line is paid to suppliers on ~21-day terms.</span>
+              <span class="ctrl__hint">Everything below the line is paid to suppliers on about 21-day terms.</span>
             </div>
           </div>
         </div>
 
         <div class="card" style="gap:0">
-          <h4 class="mb-3">Fixed commitments</h4>
+          <h4 class="mb-3">Committed costs</h4>
           <div class="controls">
             <div class="field"><label for="c-pay">Monthly payroll</label>
               <input id="c-pay" type="number" value="38000" step="1000">
               <span class="field__hint">Paid every second week.</span></div>
             <div class="field"><label for="c-opex">Other monthly overhead</label>
               <input id="c-opex" type="number" value="15000" step="1000"></div>
-            <div class="field"><label for="c-oneoff">One-off payment (tax, equipment)</label>
+            <div class="field"><label for="c-oneoff">One-off bill (tax, equipment)</label>
               <input id="c-oneoff" type="number" value="35000" step="1000"></div>
             <div class="ctrl">
               <div class="ctrl__head"><span class="ctrl__label">…due in week</span><span class="ctrl__val" id="c-ow-val">6</span></div>
               <input id="c-ow" type="range" min="1" max="13" step="1" value="6">
             </div>
-            <div class="field"><label for="c-floor">Cash safety floor</label>
+            <div class="field"><label for="c-floor">Your safety floor</label>
               <input id="c-floor" type="number" value="75000" step="5000">
-              <span class="field__hint">The balance below which you would not sleep.</span></div>
+              <span class="field__hint">The balance below which you would stop sleeping.</span></div>
           </div>
         </div>
 
@@ -75,14 +88,14 @@
           <label class="switch mb-3">
             <input id="c-hire-on" type="checkbox">
             <span class="switch__track"></span>
-            <span>Model new hires</span>
+            <span>Add new people</span>
           </label>
           <div class="controls" id="c-hire-block" style="opacity:.45;pointer-events:none">
             <div class="field"><label for="c-hire-n">How many</label>
               <input id="c-hire-n" type="number" value="2" min="1" max="20" step="1"></div>
-            <div class="field"><label for="c-hire-cost">Fully-loaded cost each, per month</label>
+            <div class="field"><label for="c-hire-cost">Full cost each, per month</label>
               <input id="c-hire-cost" type="number" value="9500" step="500">
-              <span class="field__hint">Salary plus employer taxes, benefits, equipment, software.</span></div>
+              <span class="field__hint">Salary plus employer taxes, benefits and equipment.</span></div>
             <div class="ctrl">
               <div class="ctrl__head"><span class="ctrl__label">Starting week</span><span class="ctrl__val" id="c-hw-val">3</span></div>
               <input id="c-hw" type="range" min="1" max="13" step="1" value="3">
@@ -93,69 +106,119 @@
 
       <div class="stack-lg">
         <div class="kpi-grid">
-          <div class="kpi"><div class="kpi__label">Lowest cash</div><div class="kpi__val" id="c-min">—</div><div class="kpi__delta" id="c-min-wk">—</div></div>
-          <div class="kpi"><div class="kpi__label">Weeks below floor</div><div class="kpi__val" id="c-below">—</div><div class="kpi__delta">of 13</div></div>
-          <div class="kpi"><div class="kpi__label">Funding gap</div><div class="kpi__val" id="c-gap">—</div><div class="kpi__delta">to stay above the floor</div></div>
-          <div class="kpi"><div class="kpi__label">Closing cash</div><div class="kpi__val" id="c-close">—</div><div class="kpi__delta" id="c-close-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Lowest point</div><div class="kpi__val" id="c-min">—</div><div class="kpi__delta" id="c-min-wk">—</div></div>
+          <div class="kpi"><div class="kpi__label">Weeks below your floor</div><div class="kpi__val" id="c-below">—</div><div class="kpi__delta">of 13</div></div>
+          <div class="kpi"><div class="kpi__label">Shortfall</div><div class="kpi__val" id="c-gap">—</div><div class="kpi__delta">to stay above the floor</div></div>
+          <div class="kpi"><div class="kpi__label">Cash at week 13</div><div class="kpi__val" id="c-close">—</div><div class="kpi__delta" id="c-close-d">—</div></div>
           <div class="kpi"><div class="kpi__label">Runway</div><div class="kpi__val" id="c-runway">—</div><div class="kpi__delta" id="c-runway-d">—</div></div>
-          <div class="kpi"><div class="kpi__label">Cash tied up in AR</div><div class="kpi__val" id="c-ar">—</div><div class="kpi__delta" id="c-ar-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Stuck in unpaid invoices</div><div class="kpi__val" id="c-ar">—</div><div class="kpi__delta" id="c-ar-d">—</div></div>
         </div>
 
-        <div class="card">
-          <div class="flex between mb-3">
-            <h4>Projected cash balance, week by week</h4>
-            <span class="badge" id="c-badge">13 weeks</span>
+        <div class="tabs" role="tablist" aria-label="Views">
+          <button role="tab" id="tab-fc" aria-controls="p-fc" aria-selected="true">The forecast</button>
+          <button role="tab" id="tab-wk" aria-controls="p-wk" aria-selected="false">Week by week</button>
+          <button role="tab" id="tab-fix" aria-controls="p-fix" aria-selected="false">What would fix it</button>
+        </div>
+
+        <!-- Tab 1 -->
+        <div class="tabpanel stack-lg" id="p-fc" role="tabpanel" aria-labelledby="tab-fc">
+          <div class="card">
+            <div class="flex between mb-3">
+              <h4>Cash in the bank, week by week</h4>
+              <span class="badge" id="c-badge">13 weeks</span>
+            </div>
+            <div class="chart" id="c-chart"></div>
+            <div class="legend">
+              <span><i style="background:var(--accent)"></i>Cash balance</span>
+              <span><i style="background:var(--muted)"></i>Without the new people</span>
+              <span><i style="background:var(--danger)"></i>Your safety floor</span>
+            </div>
           </div>
-          <div class="chart" id="c-chart"></div>
-          <div class="legend">
-            <span><i style="background:var(--accent)"></i>Cash balance</span>
-            <span><i style="background:var(--muted)"></i>Without the hires</span>
-            <span><i style="background:var(--danger)"></i>Safety floor</span>
+          <div class="insight">
+            <div class="insight__label">◆ What this means</div>
+            <div id="c-insight"></div>
           </div>
         </div>
 
-        <div class="card">
-          <h4 class="mb-3">Weekly net movement</h4>
-          <div class="chart" id="c-net"></div>
-          <p class="small muted mt-2">
-            The pattern matters more than the total. Payroll weeks and the one-off payment create
-            the troughs; a good treasury decision is usually about moving a date, not finding money.
-          </p>
-        </div>
-
-        <div class="insight">
-          <div class="insight__label">◆ CFO reading</div>
-          <div id="c-insight"></div>
-        </div>
-
-        <details class="card">
-          <summary style="cursor:pointer;font-weight:600;font-size:.95rem">Show the underlying weekly schedule</summary>
-          <div class="table-wrap mt-3">
-            <table class="data">
-              <thead><tr>
-                <th>Week</th><th class="n">Collections</th><th class="n">Suppliers</th>
-                <th class="n">Payroll</th><th class="n">Overhead</th><th class="n">Other</th>
-                <th class="n">Net</th><th class="n">Closing cash</th>
-              </tr></thead>
-              <tbody id="c-tbody"></tbody>
-            </table>
+        <!-- Tab 2 -->
+        <div class="tabpanel stack-lg" id="p-wk" role="tabpanel" aria-labelledby="tab-wk" hidden>
+          <div class="card">
+            <h4 class="mb-3">Money in and out, each week</h4>
+            <div class="chart" id="c-net"></div>
+            <p class="small muted mt-2">
+              The pattern matters more than the total. Payroll weeks and the one-off bill create the
+              dips — which means most cash problems are solved by moving a date, not by finding
+              money.
+            </p>
           </div>
-          <p class="small muted mt-2">
-            This is the artefact that actually gets used — a schedule the owner can take to a
-            supplier, a bank or a customer with a specific ask attached to a specific date.
-          </p>
-        </details>
+          <div class="card">
+            <h4 class="mb-3">The schedule you would actually use</h4>
+            <div class="table-wrap">
+              <table class="data">
+                <thead><tr>
+                  <th>Week</th><th class="n">Money in</th><th class="n">Suppliers</th>
+                  <th class="n">Payroll</th><th class="n">Overhead</th><th class="n">Other</th>
+                  <th class="n">Net</th><th class="n">Closing cash</th>
+                </tr></thead>
+                <tbody id="c-tbody"></tbody>
+              </table>
+            </div>
+            <p class="small muted mt-2">
+              This is the page an owner takes to a supplier, a bank or a customer — with a specific
+              request attached to a specific date, rather than a general worry.
+            </p>
+          </div>
+        </div>
 
-        <div class="card">
-          <h4>What this looks like as an engagement</h4>
-          <p class="small muted mt-1">
-            Built from your invoice ledger, payment terms, payroll calendar and committed costs —
-            then maintained weekly so it stays a decision tool rather than a one-off exercise.
-            Where the underlying reports do not exist, they get reconstructed from raw exports.
-          </p>
-          <div class="btn-row mt-3">
-            <a class="btn btn--primary" href="{{base}}contact.html?service=FP%26A%20%26%20Forecasting">Request a cash model</a>
-            <a class="btn btn--ghost" href="{{base}}services.html#fpa">The service behind this</a>
+        <!-- Tab 3 -->
+        <div class="tabpanel stack-lg" id="p-fix" role="tabpanel" aria-labelledby="tab-fix" hidden>
+          <div class="card">
+            <h4 class="mb-3">Your options, and what each one is worth</h4>
+            <div class="chart" id="c-levers"></div>
+            <p class="small muted mt-2">
+              Cash released by each action, against the shortfall you actually need to cover
+              (the dashed line). Most owners reach for the last option on this list first.
+            </p>
+          </div>
+          <div class="insight">
+            <div class="insight__label">◆ What this means</div>
+            <div id="c-fix-insight"></div>
+          </div>
+        </div>
+
+        <!-- Coverage -->
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="coverage">
+            <div class="coverage__l">
+              <div class="meter">
+                <span class="meter__n">15%</span>
+                <span class="meter__t">of a cash engagement</span>
+              </div>
+              <div class="meter__bar"><div class="meter__fill" style="width:15%"></div></div>
+              <p class="small muted mt-3">
+                This runs on four assumptions and one smooth growth rate. A real business has
+                lumpy invoices, customers who pay differently from each other, and commitments
+                already in the diary.
+              </p>
+              <div class="btn-row mt-3">
+                <a class="btn btn--accent btn--sm" href="{{base}}contact.html?service=Planning%20%26%20Forecasting">Request this for your business</a>
+              </div>
+            </div>
+            <div class="coverage__r">
+              <h4 class="mb-2">The other 85% is specific to you</h4>
+              <ul class="dashlist">
+                <li>Built from your actual invoice list and each customer’s real payment behaviour, not one average</li>
+                <li>Your payroll calendar, tax dates, loan repayments, insurance and rent — on the days they genuinely fall</li>
+                <li>Committed purchase orders and supplier terms you have already agreed</li>
+                <li>Seasonality, and what the same thirteen weeks looked like last year</li>
+                <li>Base, downside and upside versions, so you know what to watch for rather than what to hope for</li>
+                <li>The specific actions available to you, ranked — and who has to make each call</li>
+                <li>Kept current as things change, so it stays a decision aid rather than a one-off exercise</li>
+              </ul>
+              <p class="small mt-3">
+                <a class="link-arrow" href="{{base}}services.html#fpa">The full Planning &amp; Forecasting service</a>
+              </p>
+            </div>
           </div>
         </div>
       </div>

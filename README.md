@@ -10,9 +10,9 @@ works on any host, and it will still build in five years.
 
 | Page | Purpose |
 | --- | --- |
-| `index.html` | Positioning, live cash model, question-first entry points, service ladder, entry offer |
+| `index.html` | Positioning, the question→answer selector, the Financial Health Review with its FAQ, services |
 | `solutions.html` | Problem library — the owner's question routed to a model and a service |
-| `demos.html` | Index of the interactive models |
+| `demos.html` | Index of the worked examples |
 | `demos/pricing-simulator.html` | Price / volume / margin simulator with lever ranking |
 | `demos/cash-runway.html` | 13-week cash flow, runway and the hiring decision |
 | `demos/profitability.html` | Client profitability, overhead allocation, margin leakage |
@@ -23,9 +23,15 @@ works on any host, and it will still build in five years.
 | `contact.html` | Qualification form |
 | `404.html` | Not-found page |
 
-All demo figures are **synthetic** and labelled as such on every page. The
-arithmetic behind them is real — the models compute in the browser from the
-inputs on screen.
+All figures come from a **constructed example business**, labelled as such on
+every page. The arithmetic is real — every page computes in the browser from the
+inputs on screen, and each worked example states plainly how much of a real
+engagement it represents and what it leaves out.
+
+**Positioning note for future edits:** the site deliberately makes no reference
+to technology, automation, AI, software development or dashboards. The offer is
+finance judgement — understanding the owner's question and answering it. Keep
+new copy on that side of the line.
 
 ## Running it locally
 
@@ -131,9 +137,9 @@ there instead, with inline success and failure states. Nothing else changes.
 to your public origin (e.g. `https://farshadnassiri.com`) and rebuild. Absolute
 canonicals and a `sitemap.xml` are then emitted.
 
-**Pricing** — the founding-client offer ($495 vs $750, first three engagements)
-appears in `src/pages/index.html`, `services.html` and
-`financial-health-review.html`. Search for `495` when it is time to retire it.
+**Pricing** — every price on the site is a *starting* price, stated as such.
+The figures live in `src/pages/index.html`, `services.html` and
+`financial-health-review.html`; search for `$750` and `From $` to find them all.
 
 ## Deploying
 

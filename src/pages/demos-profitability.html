@@ -1,23 +1,34 @@
 <!--META {
   "slug": "demos/profitability",
-  "title": "Client profitability & margin leakage — Farshad Nassiri",
-  "desc": "Allocate overhead honestly and watch the client ranking change. Which accounts actually make money, and what firing one really costs.",
+  "title": "Which clients make money? — worked example",
+  "desc": "Client profitability after overhead, three allocation bases, margin leakage, concentration risk, and what dropping a client really costs.",
   "scripts": ["viz.js", "demo-profit.js"]
 }-->
 
 <section class="pagehead">
   <div class="wrap wrap--wide">
-    <p class="crumb"><a href="{{base}}demos.html">Interactive demos</a><span>/</span>Client profitability</p>
-    <div class="flex between" style="align-items:flex-start">
+    <p class="crumb"><a href="{{base}}demos.html">Worked examples</a><span>/</span>Client profitability</p>
+    <div class="split">
       <div>
-        <h1>Your biggest client and your best client are rarely the same company.</h1>
+        <span class="eyebrow eyebrow--accent">The owner’s question</span>
+        <h1>“Which of our clients actually make money?”</h1>
         <p class="lede">
-          Revenue is easy to see. Cost to serve is not. Change how overhead is allocated and the
-          league table rearranges itself — which is precisely why the allocation basis is a
-          management decision, not an accounting formality.
+          Revenue is easy to see. What a client costs to serve is not. Once overhead is shared out
+          honestly, the league table rarely looks like the one in the owner’s head — and your
+          biggest client and your best client turn out to be different companies.
         </p>
       </div>
-      <span class="badge badge--warn" style="flex:none">Synthetic data</span>
+      <div class="card" style="background:var(--surface-2)">
+        <h4>What you are looking at</h4>
+        <p class="small muted mt-2">
+          A constructed services business: <strong>$148,100 of monthly revenue across ten
+          clients</strong>, $82,700 of direct delivery cost, and a $46,000 monthly overhead pool
+          that has to land somewhere. The only real decision is <em>where</em>.
+        </p>
+        <p class="small muted mt-2">
+          Change the assumptions on the left and every figure updates. Nothing is pre-baked.
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -28,11 +39,11 @@
 
       <aside class="demo-side">
         <div class="card" style="gap:0">
-          <h4 class="mb-3">Allocate overhead by</h4>
+          <h4 class="mb-3">Share overhead out by</h4>
           <div class="seg seg--stack" role="group" aria-label="Allocation basis" id="pf-basis">
             <button type="button" data-basis="revenue" aria-pressed="true">Revenue</button>
-            <button type="button" data-basis="hours" aria-pressed="false">Labour hours</button>
-            <button type="button" data-basis="effort" aria-pressed="false">Service effort</button>
+            <button type="button" data-basis="hours" aria-pressed="false">Hours worked</button>
+            <button type="button" data-basis="effort" aria-pressed="false">Total effort</button>
           </div>
           <p class="xsmall muted mt-3" id="pf-basis-note"></p>
         </div>
@@ -42,90 +53,166 @@
           <div class="controls">
             <div class="field"><label for="pf-oh">Monthly overhead pool</label>
               <input id="pf-oh" type="number" value="46000" step="1000">
-              <span class="field__hint">Admin salaries, rent, software, management time — everything not booked to a job.</span></div>
+              <span class="field__hint">Admin wages, rent, insurance, management time — everything not booked to a job.</span></div>
             <div class="ctrl">
-              <div class="ctrl__head"><span class="ctrl__label">Target net margin</span><span class="ctrl__val" id="pf-tm-val">15%</span></div>
+              <div class="ctrl__head"><span class="ctrl__label">Margin you want</span><span class="ctrl__val" id="pf-tm-val">15%</span></div>
               <input id="pf-tm" type="range" min="0" max="40" step="1" value="15">
             </div>
           </div>
         </div>
 
         <div class="card" style="gap:0">
-          <h4 class="mb-3">“Should we fire them?”</h4>
+          <h4 class="mb-3">“Should we drop them?”</h4>
           <div class="controls">
-            <div class="field"><label for="pf-drop">Drop a client</label>
+            <div class="field"><label for="pf-drop">If this client left…</label>
               <select id="pf-drop"><option value="">Keep everyone</option></select></div>
             <div class="ctrl">
-              <div class="ctrl__head"><span class="ctrl__label">Overhead you could actually remove</span><span class="ctrl__val" id="pf-av-val">20%</span></div>
+              <div class="ctrl__head"><span class="ctrl__label">Overhead you could really remove</span><span class="ctrl__val" id="pf-av-val">20%</span></div>
               <input id="pf-av" type="range" min="0" max="100" step="5" value="20">
-              <span class="ctrl__hint">Of the overhead that client was carrying. Rent and management salary do not leave with them.</span>
+              <span class="ctrl__hint">Rent and management wages do not leave with a client.</span>
             </div>
           </div>
-          <div class="callout callout--box mt-3" style="padding:14px 16px" id="pf-drop-out">
-            <p class="xsmall muted mt-0">Pick a client to see what losing them actually does to total profit.</p>
-          </div>
+          <div class="callout callout--box mt-3" style="padding:14px 16px" id="pf-drop-out"></div>
         </div>
       </aside>
 
       <div class="stack-lg">
         <div class="kpi-grid">
-          <div class="kpi"><div class="kpi__label">Operating profit</div><div class="kpi__val" id="pf-op">—</div><div class="kpi__delta" id="pf-op-d">—</div></div>
-          <div class="kpi"><div class="kpi__label">Blended net margin</div><div class="kpi__val" id="pf-nm">—</div><div class="kpi__delta" id="pf-nm-d">—</div></div>
-          <div class="kpi"><div class="kpi__label">Clients below target</div><div class="kpi__val" id="pf-bt">—</div><div class="kpi__delta" id="pf-bt-d">—</div></div>
-          <div class="kpi"><div class="kpi__label">Margin leakage</div><div class="kpi__val" id="pf-leak">—</div><div class="kpi__delta">per month vs. target</div></div>
-          <div class="kpi"><div class="kpi__label">Loss-making clients</div><div class="kpi__val" id="pf-loss">—</div><div class="kpi__delta" id="pf-loss-d">—</div></div>
-          <div class="kpi"><div class="kpi__label">Profit concentration</div><div class="kpi__val" id="pf-conc">—</div><div class="kpi__delta">from the top 3 accounts</div></div>
+          <div class="kpi"><div class="kpi__label">Profit</div><div class="kpi__val" id="pf-op">—</div><div class="kpi__delta" id="pf-op-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Overall margin</div><div class="kpi__val" id="pf-nm">—</div><div class="kpi__delta" id="pf-nm-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Below your target</div><div class="kpi__val" id="pf-bt">—</div><div class="kpi__delta" id="pf-bt-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Money left on the table</div><div class="kpi__val" id="pf-leak">—</div><div class="kpi__delta">a month, against target</div></div>
+          <div class="kpi"><div class="kpi__label">Losing money</div><div class="kpi__val" id="pf-loss">—</div><div class="kpi__delta" id="pf-loss-d">—</div></div>
+          <div class="kpi"><div class="kpi__label">Profit from top 3</div><div class="kpi__val" id="pf-conc">—</div><div class="kpi__delta">concentration</div></div>
         </div>
 
-        <div class="card">
-          <div class="flex between mb-3">
-            <h4>Monthly profit by client, after overhead</h4>
-            <span class="badge" id="pf-basis-badge">by revenue</span>
+        <div class="tabs" role="tablist" aria-label="Views">
+          <button role="tab" id="tab-rank" aria-controls="p-rank" aria-selected="true">Profit by client</button>
+          <button role="tab" id="tab-table" aria-controls="p-table" aria-selected="false">The full picture</button>
+          <button role="tab" id="tab-risk" aria-controls="p-risk" aria-selected="false">Concentration &amp; risk</button>
+        </div>
+
+        <!-- Tab 1 -->
+        <div class="tabpanel stack-lg" id="p-rank" role="tabpanel" aria-labelledby="tab-rank">
+          <div class="card">
+            <div class="flex between mb-3">
+              <h4>Monthly profit by client, after overhead</h4>
+              <span class="badge" id="pf-basis-badge">by revenue</span>
+            </div>
+            <div class="chart" id="pf-bars"></div>
+            <div class="legend">
+              <span><i style="background:var(--accent)"></i>At or above your target</span>
+              <span><i style="background:var(--warn)"></i>Profitable, but below it</span>
+              <span><i style="background:var(--danger)"></i>Losing money</span>
+            </div>
           </div>
-          <div class="chart" id="pf-bars"></div>
-          <div class="legend">
-            <span><i style="background:var(--accent)"></i>At or above target</span>
-            <span><i style="background:var(--warn)"></i>Profitable but below target</span>
-            <span><i style="background:var(--danger)"></i>Loss-making</span>
+          <div class="insight">
+            <div class="insight__label">◆ What this means</div>
+            <div id="pf-insight"></div>
           </div>
         </div>
 
-        <div class="insight">
-          <div class="insight__label">◆ CFO reading</div>
-          <div id="pf-insight"></div>
+        <!-- Tab 2 -->
+        <div class="tabpanel stack-lg" id="p-table" role="tabpanel" aria-labelledby="tab-table" hidden>
+          <div class="card">
+            <h4 class="mb-3">Every client, every cost</h4>
+            <div class="table-wrap">
+              <table class="data">
+                <thead><tr>
+                  <th>Client</th><th class="n">Revenue</th><th class="n">Direct cost</th>
+                  <th class="n">Hours</th><th class="n">Overhead</th>
+                  <th class="n">Profit</th><th class="n">Margin</th><th class="n">Rev / hour</th>
+                </tr></thead>
+                <tbody id="pf-tbody"></tbody>
+                <tfoot id="pf-tfoot"></tfoot>
+              </table>
+            </div>
+            <p class="small muted mt-2">
+              Revenue per hour is the column most service businesses have never worked out. It
+              usually explains the whole ranking on its own: the accounts at the bottom are not
+              badly priced so much as badly scoped.
+            </p>
+          </div>
+          <div class="insight">
+            <div class="insight__label">◆ What this means</div>
+            <div id="pf-table-insight"></div>
+          </div>
         </div>
 
-        <div class="card">
-          <h4 class="mb-3">The full picture</h4>
-          <div class="table-wrap">
-            <table class="data">
-              <thead><tr>
-                <th>Client</th><th class="n">Revenue</th><th class="n">Direct cost</th>
-                <th class="n">Hours</th><th class="n">Overhead</th>
-                <th class="n">Net profit</th><th class="n">Net margin</th><th class="n">Rev / hour</th>
-              </tr></thead>
-              <tbody id="pf-tbody"></tbody>
-              <tfoot id="pf-tfoot"></tfoot>
-            </table>
+        <!-- Tab 3 -->
+        <div class="tabpanel stack-lg" id="p-risk" role="tabpanel" aria-labelledby="tab-risk" hidden>
+          <div class="card">
+            <h4 class="mb-3">How much of the business rests on how few clients</h4>
+            <div class="chart" id="pf-conc-chart"></div>
+            <p class="small muted mt-2">
+              Share of total revenue, largest first. Concentration is not automatically bad — but it
+              is the difference between losing a client and losing a quarter.
+            </p>
           </div>
-          <p class="small muted mt-2">
-            Revenue per hour is the column most service businesses have never calculated. It usually
-            explains the whole ranking in one number.
+          <div class="card">
+            <h4 class="mb-3">If this client left tomorrow</h4>
+            <div class="table-wrap">
+              <table class="data">
+                <thead><tr>
+                  <th>Client</th><th class="n">Revenue lost</th><th class="n">Contribution lost</th>
+                  <th class="n">Overhead removed</th><th class="n">Profit becomes</th><th class="n">Change</th>
+                </tr></thead>
+                <tbody id="pf-risk-tbody"></tbody>
+              </table>
+            </div>
+            <p class="small muted mt-2">
+              Calculated at the “overhead you could really remove” setting on the left. Move it to
+              0% to see what happens when none of the overhead can be cut.
+            </p>
+          </div>
+          <div class="insight">
+            <div class="insight__label">◆ What this means</div>
+            <div id="pf-risk-insight"></div>
+          </div>
+        </div>
+
+        <!-- Coverage -->
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="coverage">
+            <div class="coverage__l">
+              <div class="meter">
+                <span class="meter__n">20%</span>
+                <span class="meter__t">of a profitability engagement</span>
+              </div>
+              <div class="meter__bar"><div class="meter__fill" style="width:20%"></div></div>
+              <p class="small muted mt-3">
+                This page is the part that can be published, because the business is invented. It
+                shows the method. It cannot show the part that makes the answer yours.
+              </p>
+              <div class="btn-row mt-3">
+                <a class="btn btn--accent btn--sm" href="{{base}}contact.html?service=Costing%20%26%20Pricing">Request this for your business</a>
+              </div>
+            </div>
+            <div class="coverage__r">
+              <h4 class="mb-2">The other 80% is specific to you</h4>
+              <ul class="dashlist">
+                <li>Establishing what your direct costs actually are, including the labour currently sitting in overhead</li>
+                <li>Choosing an allocation basis your team will accept rather than argue with — usually the hardest conversation in the project</li>
+                <li>Splitting profitability by service line and by job, not only by client</li>
+                <li>Separating a genuinely unprofitable client from one that had a bad quarter</li>
+                <li>Contract terms, scope creep and unbilled work that never reached an invoice</li>
+                <li>What to do about each account: reprice, rescope, change delivery, or let go — and in what order</li>
+                <li>The conversation script for a price increase with a client you want to keep</li>
+              </ul>
+              <p class="small mt-3">
+                <a class="link-arrow" href="{{base}}services.html#costing-pricing">The full Costing &amp; Pricing service</a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout--box">
+          <h4>Where this usually leads next</h4>
+          <p class="small muted">
+            Knowing which clients lose money is only useful if it changes a price. The natural next
+            question is what the price should be —
+            <a class="link-arrow" href="{{base}}demos/pricing-simulator.html">see that analysis</a>
           </p>
-        </div>
-
-        <div class="card">
-          <h4>What this looks like as an engagement</h4>
-          <p class="small muted mt-1">
-            Built from your sales ledger, timesheets or job records, and payroll. If time is not
-            tracked, a defensible allocation can still be built from headcount, job counts or delivery
-            volume — the goal is a basis your team will accept, not academic perfection.
-            The output usually leads directly into a pricing conversation.
-          </p>
-          <div class="btn-row mt-3">
-            <a class="btn btn--primary" href="{{base}}contact.html?service=Costing%20%26%20Pricing">Request a profitability review</a>
-            <a class="btn btn--ghost" href="{{base}}demos/pricing-simulator.html">Then test a price change →</a>
-          </div>
         </div>
       </div>
     </div>

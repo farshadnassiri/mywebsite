@@ -73,6 +73,9 @@
   var rt;
   window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(redrawAll, 120); });
   window.addEventListener('themechange', redrawAll);
+  /* A chart inside a hidden panel measures zero width, so it has to be drawn
+     again once its tab is shown. */
+  window.addEventListener('tabshown', redrawAll);
 
   FN.mount = function (elm, render) {
     if (!elm) return { update: function () {} };

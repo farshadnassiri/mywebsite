@@ -45,11 +45,11 @@
   ];
 
   var TESTS = {
-    dupe:   { label: 'Duplicate payment',    short: 'Duplicates' },
-    split:  { label: 'Approval splitting',   short: 'Splitting' },
-    sod:    { label: 'Same person in and out', short: 'Duties' },
-    hours:  { label: 'Off-hours posting',    short: 'Off-hours' },
-    vendor: { label: 'New vendor, high value', short: 'New vendor' }
+    dupe:   { label: 'Paid twice',             short: 'Paid twice' },
+    split:  { label: 'Split under the limit',  short: 'Split' },
+    sod:    { label: 'Same person in and out', short: 'One person' },
+    hours:  { label: 'Odd hours',              short: 'Odd hours' },
+    vendor: { label: 'Brand-new supplier',     short: 'New supplier' }
   };
 
   function enabled(t) {
@@ -150,6 +150,7 @@
   }
 
   var chart = FN.mount($('s-chart'), function () { return document.createElement('div'); });
+  var vendorChart = FN.mount($('s-vendor-chart'), function () { return document.createElement('div'); });
   var view = 'flagged';
 
   function update() {
@@ -212,15 +213,16 @@
 
     /* Narrative */
     var bits = [];
-    bits.push('<p><strong>' + flaggedIdx.length + ' of ' + LEDGER.length + ' payments</strong> raised an exception, ' +
+    bits.push('<p><strong>' + flaggedIdx.length + ' of ' + LEDGER.length + ' payments</strong> raised a question, ' +
       'covering <strong>' + FN.usdC(atRisk) + '</strong> — ' + (atRisk / totalSpend * 100).toFixed(0) +
-      '% of the month’s spend. An exception is not a finding of fraud; it is a transaction that the ' +
-      'control environment should have questioned and did not.</p>');
+      '% of the month’s spend. None of this means fraud. Each one is simply a payment your process ' +
+      'should have stopped to look at, and did not.</p>');
 
     if (res.recoverable > 0) {
-      bits.push('<p>The duplicate test alone identifies <strong class="neg">' + FN.usdC(res.recoverable) +
-        '</strong> of payments made twice. That is cash out the door for goods received once — recoverable ' +
-        'with a phone call, and worth roughly ' + FN.usdC(res.recoverable * 12) + ' a year if the pattern holds.</p>');
+      bits.push('<p>The paid-twice check alone finds <strong class="neg">' + FN.usdC(res.recoverable) +
+        '</strong> paid out for goods you received once. That is a refund, not an accounting adjustment — ' +
+        'usually one phone call — and worth roughly ' + FN.usdC(res.recoverable * 12) +
+        ' a year if the same thing keeps happening.</p>');
     }
     if (counts.split > 0) {
       bits.push('<p>Invoices are clustering immediately below the ' + FN.usd(res.limit) + ' approval limit. ' +
@@ -240,10 +242,53 @@
         'details against the supplier’s own records — by phone, not by replying to the email.</p>');
     }
     if (!flaggedIdx.length) {
-      bits.push('<p>Nothing flagged at these thresholds. Worth loosening the parameters before concluding the ' +
-        'population is clean — a test that never fires is not evidence of control.</p>');
+      bits.push('<p>Nothing came up at these thresholds. Worth loosening them before concluding all is ' +
+        'well — a check that never fires is not evidence that anything is under control.</p>');
     }
     $('s-insight').innerHTML = bits.join('');
+
+    /* ---------- By supplier ---------- */
+    var byVendor = {};
+    flaggedIdx.forEach(function (i) {
+      var v = LEDGER[i].vendor;
+      byVendor[v] = byVendor[v] || { value: 0, count: 0 };
+      byVendor[v].value += LEDGER[i].amt;
+      byVendor[v].count += findings[i].length;
+    });
+    var vendorRows = Object.keys(byVendor)
+      .map(function (v) { return { name: v, value: byVendor[v].value, count: byVendor[v].count }; })
+      .sort(function (a, b) { return b.value - a.value; });
+
+    var P2 = FN.palette();
+    vendorChart.update(FN.hbars({
+      padLeft: 152, rowH: 32,
+      items: vendorRows.length
+        ? vendorRows.map(function (v, i) {
+            return { label: v.name, value: v.value, color: i === 0 ? P2.danger : P2.warn };
+          })
+        : [{ label: 'Nothing flagged', value: 0, color: P2.line }],
+      vFmt: FN.usdC
+    }));
+
+    if (!vendorRows.length) {
+      $('s-vendor-insight').innerHTML = '<p>No supplier has anything against it at these settings.</p>';
+    } else {
+      var top = vendorRows[0];
+      var repeat = vendorRows.filter(function (v) { return v.count > 1; });
+      $('s-vendor-insight').innerHTML =
+        '<p><strong>' + top.name + '</strong> accounts for ' + FN.usdC(top.value) + ' of the ' +
+        FN.usdC(atRisk) + ' involved — ' + (top.value / atRisk * 100).toFixed(0) +
+        '% of it, from one supplier relationship. That is where an owner starts.</p>' +
+        (repeat.length
+          ? '<p><strong>' + repeat.length + ' supplier' + (repeat.length > 1 ? 's raise' : ' raises') +
+            ' more than one question</strong> — ' + repeat.map(function (v) { return v.name; }).join(', ') +
+            '. Repetition is what separates a filing error from a habit, and it is the reason these ' +
+            'checks are worth running every month rather than once.</p>'
+          : '<p>Nothing repeats across suppliers, which points at isolated slips rather than a pattern ' +
+            '— reassuring, but only for this month.</p>') +
+        '<p class="small muted">None of this implies wrongdoing. It says these payments went through ' +
+        'your process without anyone being prompted to look at them.</p>';
+    }
   }
 
   document.querySelectorAll('[data-test]').forEach(function (el) { el.addEventListener('change', update); });

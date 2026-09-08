@@ -65,6 +65,7 @@
 
   var chart = FN.mount($('c-chart'), function () { return document.createElement('div'); });
   var netChart = FN.mount($('c-net'), function () { return document.createElement('div'); });
+  var leverChart = FN.mount($('c-levers'), function () { return document.createElement('div'); });
 
   function update() {
     var s = read();
@@ -176,10 +177,90 @@
     }
 
     if (min < 0) {
-      bits.push('<p class="neg"><strong>This plan goes cash-negative.</strong> Before week ' + (minIdx + 1) +
-        ' you need a facility, a deposit structure, or a payment date moved.</p>');
+      bits.push('<p class="neg"><strong>This plan runs out of money.</strong> Before week ' + (minIdx + 1) +
+        ' you need an overdraft, a deposit from customers, or a payment date moved.</p>');
     }
     $('c-insight').innerHTML = bits.join('');
+
+    /* ---------- What would fix it ---------- */
+    var P2 = FN.palette();
+    var levers = [
+      {
+        label: 'Collect 10 days faster',
+        value: s.rev * (10 / 30),
+        note: 'Chasing invoices earlier and invoicing on the day the work finishes. Costs nothing.'
+      },
+      {
+        label: 'Take 14 more days from suppliers',
+        value: s.rev * (1 - s.gm) * (14 / 30),
+        note: 'A conversation with your three largest suppliers, not a financing product.'
+      },
+      {
+        label: 'Move the one-off bill 4 weeks',
+        value: s.oneoff,
+        note: 'Only a timing change — the money is still owed, but not in the tightest week.'
+      },
+      {
+        label: 'Ask for 20% deposits',
+        value: s.rev * 0.2 * (s.dso / 30),
+        note: 'Changes the shape of every future month, not just this quarter.'
+      }
+    ];
+    if (s.hireOn) {
+      levers.push({
+        label: 'Delay hiring by 6 weeks',
+        value: s.hireN * s.hireCost * 12 / 52 * 6,
+        note: 'The same decision, made later, at no cost beyond the delay itself.'
+      });
+    }
+    levers.push({
+      label: 'Borrow the shortfall',
+      value: gap,
+      note: 'Fast, but the only option on this list you pay interest on — and it fixes nothing underneath.'
+    });
+
+    leverChart.update(FN.hbars({
+      padLeft: 176, rowH: 34, target: gap > 0 ? gap : null,
+      items: levers.map(function (l, i) {
+        return {
+          label: l.label, value: l.value,
+          color: i === levers.length - 1 ? P2.warn : P2.accent
+        };
+      }),
+      vFmt: FN.usdC
+    }));
+
+    var free = levers.slice(0, levers.length - 1);
+    var covering = free.filter(function (l) { return l.value >= gap; });
+    var best = free.slice().sort(function (a, b) { return b.value - a.value; })[0];
+    var fix = [];
+
+    if (gap > 0) {
+      fix.push('<p>You need <strong>' + FN.usdC(gap) + '</strong> to keep cash above your floor. ' +
+        (covering.length
+          ? '<strong>' + covering.length + ' of these actions would cover it on their own</strong>, and ' +
+            'none of them involve a lender. The largest, “' + best.label.toLowerCase() + '”, releases ' +
+            FN.usdC(best.value) + '.'
+          : 'No single action closes it, but ' + free.length + ' of them together release ' +
+            FN.usdC(free.reduce(function (a, l) { return a + l.value; }, 0)) +
+            ' — comfortably more than enough in combination.') + '</p>');
+    } else {
+      fix.push('<p>You have no shortfall to cover at these settings, so treat this as headroom ' +
+        'rather than a rescue. “' + best.label + '” alone would release <strong>' + FN.usdC(best.value) +
+        '</strong> of permanent slack — which is what makes the next hire, or a bad quarter, ' +
+        'survivable without a conversation with the bank.</p>');
+    }
+
+    fix.push('<p><strong>Collecting faster is almost always the largest number on this list</strong>, ' +
+      'and it is the one owners consider last. At ' + s.dso + ' days you are lending ' +
+      FN.usdC(ar) + ' to your customers, interest-free, permanently. Ten days of that is ' +
+      FN.usdC(s.rev * (10 / 30)) + ' back in your account, and it does not have to be repaid.</p>');
+
+    fix.push('<p class="small muted">Borrowing is shown for comparison, not as a recommendation. ' +
+      'It is the fastest option and the only one with a cost attached — and it leaves the cause ' +
+      'of the shortfall exactly where it was.</p>');
+
+    $('c-fix-insight').innerHTML = fix.join('');
   }
 
   ids.forEach(function (id) {
