@@ -41,7 +41,11 @@ node tools/serve.js --no-watch # serve only, skip the src/ watcher
 
 It serves the repository root, rebuilds the generated HTML whenever anything
 under `src/` changes, and sends no-cache headers so a refresh always shows the
-current build. Node 18+ is all it needs.
+current build.
+
+Any Node from 14 onwards will run it. Recursive directory watching needs Node 20
+on Linux; below that the server watches each `src/` directory individually
+instead, which covers the same files and prints a note saying so.
 
 If you would rather not use it, any static server works — the committed HTML is
 the whole site:
@@ -73,8 +77,13 @@ Two things worth knowing:
 - The web font loads from Google Fonts. Offline, the site falls back to system
   fonts and stays fully usable, it just looks slightly different.
 
-If `node` is missing: `sudo apt install nodejs` (or install Node 22 from
-NodeSource for a current version).
+If `node` is missing, `sudo apt install nodejs` works, though on older Ubuntu
+releases it installs a very old Node. For a current one:
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+```
 
 ## Editing
 

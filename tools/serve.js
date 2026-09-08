@@ -74,16 +74,41 @@ server.on('error', (e) => {
   throw e;
 });
 
+/* Watch a directory tree.
+ * fs.watch({recursive:true}) only works on Linux from Node 20 onwards, so fall
+ * back to watching each directory individually — src/ is two levels deep, which
+ * that covers completely. */
+function watchTree(dir, onChange) {
+  try {
+    fs.watch(dir, { recursive: true }, (_e, name) => onChange(name));
+    return 'src/';
+  } catch (e) {
+    if (e.code !== 'ERR_FEATURE_UNAVAILABLE_ON_PLATFORM' && e.code !== 'ENOSYS') throw e;
+    var dirs = [dir].concat(
+      fs.readdirSync(dir, { withFileTypes: true })
+        .filter((d) => d.isDirectory())
+        .map((d) => path.join(dir, d.name))
+    );
+    dirs.forEach((d) => fs.watch(d, (_e, name) => onChange(name)));
+    return 'src/ (' + dirs.length + ' directories; this Node is too old for recursive watching)';
+  }
+}
+
 server.listen(port, () => {
   console.log(`\n  Farshad Nassiri — site running`);
   console.log(`  http://localhost:${port}\n`);
   if (watch) {
     let timer = null;
-    fs.watch(path.join(ROOT, 'src'), { recursive: true }, (_e, name) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => build(name || 'src changed'), 120);
-    });
-    console.log('  Watching src/ — edit a page and refresh the browser.');
+    try {
+      const what = watchTree(path.join(ROOT, 'src'), (name) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => build(name || 'src changed'), 120);
+      });
+      console.log(`  Watching ${what} — edit a page and refresh the browser.`);
+    } catch (e) {
+      console.log('  Could not watch src/ (' + e.message + ').');
+      console.log('  Run `node tools/build.js` by hand after editing a page.');
+    }
   }
   console.log('  Ctrl+C to stop.\n');
 });
