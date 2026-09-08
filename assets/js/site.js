@@ -117,6 +117,62 @@
       if (ta && !ta.value) ta.value = decodeURIComponent(q);
     }
 
+    /* The enquiry as a plain-text message. Used for the no-endpoint fallback and,
+       more importantly, to give the visitor a way out if the post fails. */
+    function composeMessage() {
+      var data = new FormData(form);
+      var lines = [];
+      data.forEach(function (v, k) {
+        if (k.charAt(0) === '_') return;          /* form-service control fields */
+        if (!String(v).trim()) return;
+        var label = k.replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+        lines.push(label + ': ' + v);
+      });
+      return {
+        subject: 'Website enquiry — ' + (data.get('service') || 'General'),
+        body: lines.join('\n')
+      };
+    }
+
+    function mailtoHref() {
+      var m = composeMessage();
+      return 'mailto:farshadnassiri@gmail.com?subject=' + encodeURIComponent(m.subject) +
+             '&body=' + encodeURIComponent(m.body);
+    }
+
+    /* A failed post must not be a dead end: the visitor gets one click to send
+       the same details by email, and a copy button for anyone on webmail whose
+       browser does nothing with a mailto link. */
+    function showFallback(status, reason, retryable) {
+      status.hidden = false;
+      status.className = 'callout callout--box callout--warn mt-3';
+      status.innerHTML =
+        '<h4>That did not send.</h4>' +
+        '<p class="small muted">' + reason + '</p>' +
+        '<div class="btn-row mt-2">' +
+          '<a class="btn btn--primary btn--sm" href="' + mailtoHref() + '">Send it as an email instead</a>' +
+          '<button type="button" class="btn btn--ghost btn--sm" data-copy-enquiry>Copy the details</button>' +
+        '</div>' +
+        '<p class="note mt-2">Nothing you typed has been lost — it is still in the form above. ' +
+        (retryable ? 'You can also just try again. ' : '') +
+        'The address is <strong>farshadnassiri@gmail.com</strong>.</p>';
+      status.scrollIntoView({ block: 'nearest' });
+
+      var copyBtn = status.querySelector('[data-copy-enquiry]');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          var m = composeMessage();
+          var text = m.subject + '\n\n' + m.body;
+          var done = function () { copyBtn.textContent = 'Copied'; };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, function () { copyBtn.textContent = 'Press Ctrl+C'; });
+          } else {
+            copyBtn.textContent = 'Press Ctrl+C';
+          }
+        });
+      }
+    }
+
     form.addEventListener('submit', function (e) {
       var endpoint = (window.SITE_CONFIG && window.SITE_CONFIG.formEndpoint) || '';
       var status = form.querySelector('[data-form-status]');
@@ -138,7 +194,18 @@
           headers: { Accept: 'application/json' },
           body: body
         }).then(function (r) {
-          if (!r.ok) throw new Error('bad status');
+          if (r.ok) return null;
+          /* Read the service's own explanation — a monthly cap being reached
+             needs different advice from a network blip. */
+          return r.json().catch(function () { return null; }).then(function (j) {
+            var msg = j && (j.error ||
+              (j.errors && j.errors[0] && (j.errors[0].message || j.errors[0].code)));
+            var err = new Error(msg || 'request failed');
+            err.status = r.status;
+            err.detail = msg;
+            throw err;
+          });
+        }).then(function () {
           form.reset();
           if (status) {
             status.hidden = false;
@@ -148,37 +215,30 @@
               'follow-up questions so the first call is useful rather than exploratory.</p>';
             status.scrollIntoView({ block: 'nearest' });
           }
-        }).catch(function () {
-          if (status) {
-            status.hidden = false;
-            status.className = 'callout callout--box callout--warn mt-3';
-            status.innerHTML = '<h4>That did not go through.</h4>' +
-              '<p class="small muted">Nothing you typed has been lost — it is still in the form. ' +
-              'Please try once more, or send the same details straight to ' +
-              '<a class="link-arrow" href="mailto:farshadnassiri@gmail.com">farshadnassiri@gmail.com</a>.</p>';
-            status.scrollIntoView({ block: 'nearest' });
-          }
+        }).catch(function (err) {
+          if (!status) return;
+          var capped = err && (err.status === 429 ||
+            /limit|quota|exceed/i.test(String(err.detail || '')));
+          showFallback(
+            status,
+            capped
+              ? 'The form is not accepting submissions at the moment. Nothing is wrong with what ' +
+                'you wrote — please send it by email and it will be answered the same way.'
+              : 'Something went wrong between your browser and the form — usually a connection ' +
+                'that dropped mid-send.',
+            !capped
+          );
         }).finally(function () {
           if (btn) { btn.disabled = false; btn.textContent = 'Send request'; }
         });
         return;
       }
 
-      /* No endpoint configured yet — compose an email instead. */
+      /* No endpoint configured — offer the same email escape hatch. */
       e.preventDefault();
-      var data = new FormData(form);
-      var lines = [];
-      data.forEach(function (v, k) {
-        if (String(v).trim()) lines.push(k.replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }) + ': ' + v);
-      });
-      var subject = 'Website enquiry — ' + (data.get('service') || 'General');
-      window.location.href = 'mailto:farshadnassiri@gmail.com?subject=' +
-        encodeURIComponent(subject) + '&body=' + encodeURIComponent(lines.join('\n'));
+      window.location.href = mailtoHref();
       if (status) {
-        status.hidden = false;
-        status.className = 'callout callout--box mt-3';
-        status.innerHTML = '<h4>Opening your email client…</h4><p class="small muted">If nothing opened, ' +
-          'send the same details to <strong>farshadnassiri@gmail.com</strong>.</p>';
+        showFallback(status, 'This form is not connected to a mailbox yet, so it has to go by email.', false);
       }
     });
   }

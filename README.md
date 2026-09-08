@@ -137,9 +137,14 @@ dashboard.
 The handler in `assets/js/site.js` posts the whole form as `FormData` and adds
 two fields of its own: `_subject` (`Company — Service`, so enquiries are
 triageable from the inbox list) and `_replyto` (so Reply goes to the sender).
-A hidden `_gotcha` honeypot on the form discards bot submissions. On success the
-form resets and confirms; on failure it keeps what was typed and offers the
-email address instead.
+A hidden `_gotcha` honeypot on the form discards bot submissions.
+
+On success the form resets and confirms. **On any failure — including the free
+plan's monthly cap being reached — the visitor is not left at a dead end:** what
+they typed stays in the form, and they get a one-click "send it as an email
+instead" link with every field already composed, plus a copy button for anyone
+on webmail whose browser ignores `mailto:`. A capped form and a dropped
+connection get different wording, since retrying only helps for one of them.
 
 The endpoint is public by design — it lives in client-side code, like every
 static-site form service. To swap provider, replace the URL; to go back to the
