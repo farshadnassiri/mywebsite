@@ -27,6 +27,55 @@ All demo figures are **synthetic** and labelled as such on every page. The
 arithmetic behind them is real — the models compute in the browser from the
 inputs on screen.
 
+## Running it locally
+
+The site is static, so nothing needs to be installed and nothing needs to be
+built before it will run. There is a small dependency-free dev server in the
+repo:
+
+```bash
+node tools/serve.js            # http://localhost:8000
+node tools/serve.js 3000       # a different port
+node tools/serve.js --no-watch # serve only, skip the src/ watcher
+```
+
+It serves the repository root, rebuilds the generated HTML whenever anything
+under `src/` changes, and sends no-cache headers so a refresh always shows the
+current build. Node 18+ is all it needs.
+
+If you would rather not use it, any static server works — the committed HTML is
+the whole site:
+
+```bash
+python3 -m http.server 8000
+```
+
+Opening `index.html` straight from the filesystem also works; only the demo
+models need JavaScript, and they run fine over `file://`.
+
+### On WSL
+
+```bash
+git clone https://github.com/farshadnassiri/mywebsite.git
+cd mywebsite
+git checkout claude/fractional-cfo-website-b7hyfx
+node tools/serve.js
+```
+
+Then open <http://localhost:8000> in Windows. WSL2 forwards `localhost`
+automatically; if your setup does not, use the address `hostname -I` prints.
+
+Two things worth knowing:
+
+- Keep the clone in the Linux filesystem (`~/mywebsite`), not under
+  `/mnt/c/...`. On a Windows drive `fs.watch` misses changes, so the rebuild
+  watcher silently stops working — and everything is slower.
+- The web font loads from Google Fonts. Offline, the site falls back to system
+  fonts and stays fully usable, it just looks slightly different.
+
+If `node` is missing: `sudo apt install nodejs` (or install Node 22 from
+NodeSource for a current version).
+
 ## Editing
 
 The root `.html` files are **generated**. Do not edit them directly; they are
@@ -39,6 +88,7 @@ src/
   partials/footer.html  ← footer, including the synthetic-data disclaimer
   pages/*.html          ← page bodies, each starting with a <!--META {...}--> block
 tools/build.js          ← the builder (no dependencies)
+tools/serve.js          ← local dev server + src/ watcher
 assets/css/main.css     ← the whole design system
 assets/js/              ← site chrome, chart helpers, one file per demo
 ```
