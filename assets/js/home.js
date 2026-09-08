@@ -21,9 +21,16 @@
   var CASH_HIRE = [113538,124614,110767,117459,106612,78304,67457,74148,63302,69993,59146,65838,54991];
   var FLOOR = 75000;
 
+  var CHECKS = [
+    { label: 'Paid twice', value: 5 }, { label: 'Split', value: 5 },
+    { label: 'One person', value: 3 }, { label: 'Odd hours', value: 4 },
+    { label: 'New supplier', value: 2 }
+  ];
+
   var QUESTIONS = [
     {
       id: 'money',
+      example: 'demos/profitability.html', service: 'services.html#costing-pricing',
       short: 'Where is my money actually going?',
       title: 'Cost structure',
       q: 'Where is my money actually going?',
@@ -54,6 +61,7 @@
     },
     {
       id: 'profit',
+      example: 'demos/profitability.html', service: 'services.html#costing-pricing',
       short: 'Am I actually profitable?',
       title: 'Client profitability',
       q: 'Am I actually profitable — and on which work?',
@@ -83,6 +91,7 @@
     },
     {
       id: 'price',
+      example: 'demos/pricing-simulator.html', service: 'services.html#costing-pricing',
       short: 'Are we charging enough?',
       title: 'Pricing',
       q: 'Are we charging enough?',
@@ -116,6 +125,7 @@
     },
     {
       id: 'cash',
+      example: 'demos/cash-runway.html', service: 'services.html#fpa',
       short: 'Will we run out of cash?',
       title: 'Cash forecast',
       q: 'Will we run out of cash?',
@@ -145,6 +155,7 @@
     },
     {
       id: 'hire',
+      example: 'demos/cash-runway.html#hiring', service: 'services.html#fpa',
       short: 'Can we afford to hire?',
       title: 'Hiring decision',
       q: 'Can we afford to hire?',
@@ -173,6 +184,38 @@
             'it back six weeks, or collecting faster first, makes the same hires safe.',
       get: 'In a review you get this tested on your own numbers before you make an offer — ' +
            '<b>an affordable answer and a defensible start date</b>, not a gut call.'
+    },
+    {
+      id: 'leak',
+      example: 'demos/spend-controls.html', service: 'services.html#controls',
+      short: 'Could money be going out unnoticed?',
+      title: 'Payments',
+      q: 'Could money be going out without anyone checking?',
+      kpis: [
+        { l: 'Payments checked', v: '36 of 36', d: 'one month, all of them' },
+        { l: 'Raised a question', v: '11', d: '31% of payments', neg: true },
+        { l: 'Recovered', v: FN.usdC(10600), d: 'paid twice', pos: true }
+      ],
+      caption: 'Five checks run across every payment in the month, and what each one found.',
+      chart: function () {
+        var P = FN.palette();
+        return FN.bars({
+          height: 230, maxBar: 64,
+          yFmt: function (v) { return String(Math.round(v)); },
+          vFmt: function (v) { return String(Math.round(v)); },
+          items: CHECKS.map(function (c, i) {
+            return { label: c.label, value: c.value, color: i === 0 ? P.danger : P.warn };
+          })
+        });
+      },
+      take: 'Nobody here is dishonest. The business simply grew and the habits did not. ' +
+            '<strong>$10,600 was paid out twice</strong> for goods received once — a refund, not an ' +
+            'accounting adjustment. Five invoices arrived just under the $5,000 approval limit within ' +
+            'a few days of each other, so work needing a second signature never got one. ' +
+            'And three payments were entered and approved by the same person, which in a small team ' +
+            'is normal — it just needs something alongside it.',
+      get: 'In a review every payment in the period is checked, not a sample of twenty — with ' +
+           '<b>a figure against each finding</b> and the smallest change that stops it recurring.'
     }
   ];
 
@@ -199,6 +242,8 @@
         '<div class="kpi__delta">' + k.d + '</div></div>';
     }).join('');
     chart.update(q.chart());
+    $('ans-example').href = q.example;
+    $('ans-service').href = q.service;
   }
 
   picker.addEventListener('click', function (e) {

@@ -10,9 +10,8 @@ works on any host, and it will still build in five years.
 
 | Page | Purpose |
 | --- | --- |
-| `index.html` | Positioning, the question→answer selector, the Financial Health Review with its FAQ, services |
-| `solutions.html` | Problem library — the owner's question routed to a model and a service |
-| `demos.html` | Index of the worked examples |
+| `index.html` | The problem picker and its live answer panel, the Financial Health Review with its FAQ, services |
+| `solutions.html` | The 30 business problems, grouped by theme; the hub the whole site funnels through |
 | `demos/pricing-simulator.html` | Price / volume / margin simulator with lever ranking |
 | `demos/cash-runway.html` | 13-week cash flow, runway and the hiring decision |
 | `demos/profitability.html` | Client profitability, overhead allocation, margin leakage |
@@ -28,10 +27,18 @@ every page. The arithmetic is real — every page computes in the browser from t
 inputs on screen, and each worked example states plainly how much of a real
 engagement it represents and what it leaves out.
 
-**Positioning note for future edits:** the site deliberately makes no reference
-to technology, automation, AI, software development or dashboards. The offer is
-finance judgement — understanding the owner's question and answering it. Keep
-new copy on that side of the line.
+**Positioning notes for future edits:**
+
+- The site makes no reference to technology, automation, AI, software
+  development or dashboards. The offer is finance judgement — understanding the
+  owner's problem and answering it.
+- The funnel is **problem → worked example → service**, in that order, and every
+  page should keep a visitor moving along it. The homepage picker, the problem
+  hub and the closing block of each worked example are the three hinges.
+- Nothing is presented as a real client engagement. The example business is
+  constructed and every page says so; outcomes are written as "in the example".
+  Each worked example states that it is roughly 5% of a real engagement and
+  lists what the other 95% covers.
 
 ## Running it locally
 
