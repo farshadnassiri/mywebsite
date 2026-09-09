@@ -154,14 +154,27 @@ email-draft fallback, empty it.
 **Analytics** — `assets/js/config.js`. Both routes are off in the shipped state:
 no script, no cookie, no request anywhere.
 
-- `analytics.script` + `attrs` — a collector you host yourself (Umami,
-  Plausible, Matomo). Cookieless, so it loads immediately and needs no banner.
-- `analytics.ga4Id` — Google Analytics. Note that **Google has suspended
-  Analytics for accounts associated with Iranian IP addresses**, so this route
-  is unavailable from some regions regardless of the code; the self-hosted one
-  is not.
+- `analytics.script` + `attrs` — any cookieless collector. **This is the
+  intended route.** For Cloudflare Web Analytics:
 
-Both drive the same `siteTrack()` events, so switching costs one line.
+  ```js
+  script: 'https://static.cloudflareinsights.com/beacon.min.js',
+  attrs: { 'data-cf-beacon': '{"token": "YOUR_TOKEN"}' }
+  ```
+
+  Nothing is stored on the visitor's device, so no consent banner appears.
+  Cloudflare has **no custom-event API**, so the `siteTrack()` calls stay
+  no-ops under it — top pages still shows which worked example gets read. A
+  self-hosted collector (Umami, Plausible, Matomo) slots into the same two
+  fields and does record the events.
+- `analytics.ga4Id` — Google Analytics, with the consent banner. Note that
+  **Google has suspended Analytics for accounts associated with Iranian IP
+  addresses**, so this route is unavailable from some regions regardless of
+  the code.
+
+**`privacy.html` describes whichever one is actually running** — it currently
+describes Cloudflare. Change the analytics route and that page has to change
+with it, or it becomes untrue.
 
 Because GA4 stores cookies, `requireConsent` (default `true`) keeps it off until
 the visitor accepts: declining loads nothing rather than loading Google with

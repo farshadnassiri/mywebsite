@@ -12,8 +12,21 @@ window.SITE_CONFIG = {
   /* Analytics. Both options are off by default: nothing loads, no cookie is
      set, and no request leaves the page.
 
-     `script` — a collector you host yourself (Umami, Plausible, Matomo). These
-     are cookieless, so they load straight away and need no consent banner:
+     `script` — a cookieless collector. It loads straight away and needs no
+     consent banner, because it stores nothing on the visitor's device.
+
+     Cloudflare Web Analytics (free; token from the Cloudflare dashboard under
+     Analytics & Logs → Web Analytics → your site → Manage site):
+
+       script: 'https://static.cloudflareinsights.com/beacon.min.js',
+       attrs: { 'data-cf-beacon': '{"token": "PASTE_YOUR_TOKEN"}' }
+
+     Cloudflare reports page views, visits, referrers, countries and devices.
+     It has no custom-event API, so the siteTrack() calls in site.js are NOT
+     recorded by it — they stay harmless no-ops, ready for a collector that
+     does. Top pages still shows which worked example gets read.
+
+     Or a collector you host yourself, which does support events:
 
        script: 'https://stats.yourdomain.com/script.js',
        attrs: { 'data-website-id': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' }
@@ -24,8 +37,7 @@ window.SITE_CONFIG = {
      requireConsent to false only if you are certain no visitor is in a
      jurisdiction that requires prior consent (the EU and UK do).
 
-     Either one drives the same siteTrack() events, so switching between them
-     costs one line here and nothing else. */
+     Switching between any of these costs one line here and nothing else. */
   analytics: {
     script: '',
     attrs: {},
