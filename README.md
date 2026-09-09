@@ -154,15 +154,19 @@ email-draft fallback, empty it.
 **Analytics** — `assets/js/config.js`. Both routes are off in the shipped state:
 no script, no cookie, no request anywhere.
 
-- `analytics.script` + `attrs` — any cookieless collector. **This is the
-  intended route.** For Cloudflare Web Analytics:
+- `analytics.script` + `attrs` — any cookieless collector. **Cloudflare Web
+  Analytics is what is configured**, injected from config rather than pasted
+  into the shell so the token lives in one place:
 
   ```js
   script: 'https://static.cloudflareinsights.com/beacon.min.js',
-  attrs: { 'data-cf-beacon': '{"token": "YOUR_TOKEN"}' }
+  attrs: { type: 'module', 'data-cf-beacon': '{"token": "…"}' }
   ```
 
-  Nothing is stored on the visitor's device, so no consent banner appears.
+  The token is public by design, like the form endpoint. Nothing is stored on
+  the visitor's device, so no consent banner appears. Expect some undercounting:
+  ad blockers commonly block the beacon host, and nothing on the site depends on
+  it loading.
   Cloudflare has **no custom-event API**, so the `siteTrack()` calls stay
   no-ops under it — top pages still shows which worked example gets read. A
   self-hosted collector (Umami, Plausible, Matomo) slots into the same two

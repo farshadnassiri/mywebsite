@@ -53,11 +53,13 @@
   function loadSelfHosted() {
     if (selfHosted || !AN.script) return;
     selfHosted = true;
+    var attrs = AN.attrs || {};
     var s = document.createElement('script');
-    s.async = true;
-    s.defer = true;
     s.src = AN.script;
-    Object.keys(AN.attrs || {}).forEach(function (k) { s.setAttribute(k, AN.attrs[k]); });
+    /* A module script already defers; forcing async on it would change when it
+       runs, so only add async/defer for a classic script. */
+    if (!attrs.type) { s.async = true; s.defer = true; }
+    Object.keys(attrs).forEach(function (k) { s.setAttribute(k, attrs[k]); });
     document.head.appendChild(s);
   }
 

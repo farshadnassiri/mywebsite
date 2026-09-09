@@ -19,7 +19,10 @@ window.SITE_CONFIG = {
      Analytics & Logs → Web Analytics → your site → Manage site):
 
        script: 'https://static.cloudflareinsights.com/beacon.min.js',
-       attrs: { 'data-cf-beacon': '{"token": "PASTE_YOUR_TOKEN"}' }
+       attrs: { type: 'module', 'data-cf-beacon': '{"token": "..."}' }
+
+     The token is public by design — it sits in the page source of every site
+     using it, exactly like the form endpoint above.
 
      Cloudflare reports page views, visits, referrers, countries and devices.
      It has no custom-event API, so the siteTrack() calls in site.js are NOT
@@ -39,8 +42,11 @@ window.SITE_CONFIG = {
 
      Switching between any of these costs one line here and nothing else. */
   analytics: {
-    script: '',
-    attrs: {},
+    script: 'https://static.cloudflareinsights.com/beacon.min.js',
+    attrs: {
+      type: 'module',
+      'data-cf-beacon': '{"token": "630e06ba79f6498fa91a461b1fe938f5"}'
+    },
     ga4Id: '',
     requireConsent: true
   }
