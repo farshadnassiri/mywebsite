@@ -9,16 +9,26 @@ window.SITE_CONFIG = {
   email: 'farshadnassiri@gmail.com',
   calendarUrl: '',  /* e.g. a Cal.com or Calendly link; falls back to /contact.html */
 
-  /* Google Analytics 4.
-     ga4Id: your Measurement ID from Admin → Data streams (looks like G-XXXXXXXXXX).
-     Left empty, nothing loads: no script, no cookie, no request to Google.
+  /* Analytics. Both options are off by default: nothing loads, no cookie is
+     set, and no request leaves the page.
 
-     GA4 stores cookies, so requireConsent keeps it switched off until the
-     visitor accepts. Nothing is loaded before they do — declining loads
-     nothing at all, rather than loading Google with storage disabled.
-     Set requireConsent to false only if you are certain you have no visitors
-     in jurisdictions that require prior consent (the EU and UK do). */
+     `script` — a collector you host yourself (Umami, Plausible, Matomo). These
+     are cookieless, so they load straight away and need no consent banner:
+
+       script: 'https://stats.yourdomain.com/script.js',
+       attrs: { 'data-website-id': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' }
+
+     `ga4Id` — Google Analytics, e.g. 'G-XXXXXXXXXX'. GA stores cookies, so
+     requireConsent keeps it off until the visitor accepts; declining loads
+     nothing at all rather than loading Google with storage disabled. Set
+     requireConsent to false only if you are certain no visitor is in a
+     jurisdiction that requires prior consent (the EU and UK do).
+
+     Either one drives the same siteTrack() events, so switching between them
+     costs one line here and nothing else. */
   analytics: {
+    script: '',
+    attrs: {},
     ga4Id: '',
     requireConsent: true
   }

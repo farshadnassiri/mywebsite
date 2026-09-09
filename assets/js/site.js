@@ -47,11 +47,32 @@
     window.gtag('config', AN.ga4Id);
   }
 
-  /* Named events. A no-op when analytics is off or consent was declined, so
-     callers never have to check. */
+  /* A collector hosted on your own domain (Umami, Plausible, Matomo). These set
+     no cookie, so there is nothing to ask permission for and it loads at once. */
+  var selfHosted = false;
+  function loadSelfHosted() {
+    if (selfHosted || !AN.script) return;
+    selfHosted = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.defer = true;
+    s.src = AN.script;
+    Object.keys(AN.attrs || {}).forEach(function (k) { s.setAttribute(k, AN.attrs[k]); });
+    document.head.appendChild(s);
+  }
+
+  /* Named events, sent to whichever collector is running. A no-op when
+     analytics is off or consent was declined, so callers never have to check. */
   window.siteTrack = function (name, props) {
     if (gaLoaded && typeof window.gtag === 'function') {
       window.gtag('event', name, props || {});
+    }
+    if (selfHosted) {
+      if (window.umami && typeof window.umami.track === 'function') {
+        window.umami.track(name, props || {});
+      } else if (typeof window.plausible === 'function') {
+        window.plausible(name, { props: props || {} });
+      }
     }
   };
 
@@ -83,6 +104,8 @@
       setTimeout(function () { bar.remove(); }, 250);
     });
   }
+
+  loadSelfHosted();
 
   if (AN.ga4Id) {
     if (AN.requireConsent === false) {

@@ -151,9 +151,17 @@ The endpoint is public by design — it lives in client-side code, like every
 static-site form service. To swap provider, replace the URL; to go back to the
 email-draft fallback, empty it.
 
-**Analytics** — `assets/js/config.js` holds `analytics.ga4Id`. Empty (the shipped
-state) means no script, no cookie and no request to Google at all. Paste the
-Measurement ID from GA4 Admin → Data streams to switch it on.
+**Analytics** — `assets/js/config.js`. Both routes are off in the shipped state:
+no script, no cookie, no request anywhere.
+
+- `analytics.script` + `attrs` — a collector you host yourself (Umami,
+  Plausible, Matomo). Cookieless, so it loads immediately and needs no banner.
+- `analytics.ga4Id` — Google Analytics. Note that **Google has suspended
+  Analytics for accounts associated with Iranian IP addresses**, so this route
+  is unavailable from some regions regardless of the code; the self-hosted one
+  is not.
+
+Both drive the same `siteTrack()` events, so switching costs one line.
 
 Because GA4 stores cookies, `requireConsent` (default `true`) keeps it off until
 the visitor accepts: declining loads nothing rather than loading Google with
