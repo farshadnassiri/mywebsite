@@ -727,3 +727,22 @@ a.pcard:hover { border-color: var(--line-strong); box-shadow: var(--shadow); tra
 }
 .funnel__s h4 { font-size: 1.05rem; margin-bottom: .4rem; }
 .funnel__s p { font-size: .9rem; color: var(--muted); }
+
+/* ---------- Consent bar ---------- */
+.consent {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+  background: var(--surface); border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 32px -18px rgba(16,19,21,.35);
+  transform: translateY(100%); transition: transform .28s cubic-bezier(.2,.7,.3,1);
+}
+html[data-theme="dark"] .consent { box-shadow: 0 -8px 32px -18px rgba(0,0,0,.7); }
+.consent.is-in { transform: none; }
+@media (prefers-reduced-motion: reduce) { .consent { transition: none; } }
+.consent__in {
+  max-width: var(--wrap); margin-inline: auto; padding: 16px var(--gut);
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.consent__t { font-size: .855rem; color: var(--ink-2); flex: 1 1 420px; margin: 0; line-height: 1.5; }
+.consent__t a { color: var(--accent); border-bottom: 1px solid currentColor; }
+.consent__b { display: flex; gap: 10px; margin-left: auto; }
+@media (max-width: 560px) { .consent__b { margin-left: 0; width: 100%; } .consent__b .btn { flex: 1; } }

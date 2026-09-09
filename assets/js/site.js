@@ -2,6 +2,106 @@
 (function () {
   'use strict';
 
+  /* ==========================================================================
+     Analytics — Google Analytics 4, loaded only with consent
+     ========================================================================== */
+  var CFG = window.SITE_CONFIG || {};
+  var AN = CFG.analytics || {};
+
+  /* Pages under demos/ sit one level down, so any link this script builds needs
+     the same prefix the shell gives the static ones. Derived from our own tag. */
+  var BASE = (function () {
+    var tag = document.querySelector('script[src$="assets/js/site.js"]');
+    var src = tag ? tag.getAttribute('src') || '' : '';
+    return src.replace(/assets\/js\/site\.js$/, '');
+  })();
+  var CONSENT_KEY = 'fn-consent';
+  var gaLoaded = false;
+
+  function consentChoice() {
+    try { return localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
+  }
+  function rememberConsent(v) {
+    try { localStorage.setItem(CONSENT_KEY, v); } catch (e) {}
+  }
+
+  function loadGA() {
+    if (gaLoaded || !AN.ga4Id) return;
+    gaLoaded = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    /* Start from denied and grant only analytics: this site runs no advertising,
+       so the ad categories stay off permanently. */
+    window.gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied'
+    });
+    window.gtag('consent', 'update', { analytics_storage: 'granted' });
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(AN.ga4Id);
+    document.head.appendChild(s);
+    window.gtag('config', AN.ga4Id);
+  }
+
+  /* Named events. A no-op when analytics is off or consent was declined, so
+     callers never have to check. */
+  window.siteTrack = function (name, props) {
+    if (gaLoaded && typeof window.gtag === 'function') {
+      window.gtag('event', name, props || {});
+    }
+  };
+
+  function showConsentBanner() {
+    var bar = document.createElement('div');
+    bar.className = 'consent';
+    bar.setAttribute('role', 'dialog');
+    bar.setAttribute('aria-label', 'Cookies');
+    bar.innerHTML =
+      '<div class="consent__in">' +
+        '<p class="consent__t">This site can use Google Analytics to count visits and see which ' +
+        'pages are read. It stores a cookie, so it only runs if you agree. Declining changes ' +
+        'nothing else about the site. <a href="' + BASE + 'privacy.html">What is collected</a></p>' +
+        '<div class="consent__b">' +
+          '<button type="button" class="btn btn--ghost btn--sm" data-consent="denied">Decline</button>' +
+          '<button type="button" class="btn btn--primary btn--sm" data-consent="granted">Accept</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(bar);
+    requestAnimationFrame(function () { bar.classList.add('is-in'); });
+
+    bar.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-consent]');
+      if (!b) return;
+      var choice = b.getAttribute('data-consent');
+      rememberConsent(choice);
+      if (choice === 'granted') loadGA();
+      bar.classList.remove('is-in');
+      setTimeout(function () { bar.remove(); }, 250);
+    });
+  }
+
+  if (AN.ga4Id) {
+    if (AN.requireConsent === false) {
+      loadGA();
+    } else {
+      var choice = consentChoice();
+      if (choice === 'granted') loadGA();
+      else if (choice !== 'denied') showConsentBanner();
+    }
+  }
+
+  /* Lets the privacy page offer a way to change the decision. */
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('[data-consent-reset]')) return;
+    e.preventDefault();
+    try { localStorage.removeItem(CONSENT_KEY); } catch (err) {}
+    location.reload();
+  });
+
   /* ---------- Theme ---------- */
   var root = document.documentElement;
   var KEY = 'fn-theme';
@@ -206,6 +306,10 @@
             throw err;
           });
         }).then(function () {
+          window.siteTrack('enquiry_sent', {
+            service_name: String(body.get('service') || 'unspecified'),
+            sector: String(body.get('sector') || 'unspecified')
+          });
           form.reset();
           if (status) {
             status.hidden = false;
@@ -216,6 +320,7 @@
             status.scrollIntoView({ block: 'nearest' });
           }
         }).catch(function (err) {
+          window.siteTrack('enquiry_failed', { reason: String((err && err.status) || 'network') });
           if (!status) return;
           var capped = err && (err.status === 429 ||
             /limit|quota|exceed/i.test(String(err.detail || '')));
@@ -242,6 +347,19 @@
       }
     });
   }
+
+  /* ---------- What visitors actually do ----------
+     Derived from the href rather than sprinkled through the markup, so every
+     link to a case or a service is covered without touching 30 cards. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    var m = href.match(/demos\/([a-z-]+)\.html/);
+    if (m) { window.siteTrack('case_opened', { case_name: m[1] }); return; }
+    m = href.match(/services\.html#([a-z-]+)/);
+    if (m) window.siteTrack('service_opened', { service_name: m[1] });
+  });
 
   /* ---------- Tabs ---------- */
   document.querySelectorAll('[role="tablist"]').forEach(function (list) {

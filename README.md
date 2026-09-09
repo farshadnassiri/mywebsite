@@ -20,6 +20,7 @@ works on any host, and it will still build in five years.
 | `financial-health-review.html` | The entry offer, in detail |
 | `about.html` | Background, data handling, and an explicit scope boundary |
 | `contact.html` | Qualification form |
+| `privacy.html` | What the site collects, and a control to change the analytics choice |
 | `404.html` | Not-found page |
 
 All figures come from a **constructed example business**, labelled as such on
@@ -149,6 +150,28 @@ connection get different wording, since retrying only helps for one of them.
 The endpoint is public by design — it lives in client-side code, like every
 static-site form service. To swap provider, replace the URL; to go back to the
 email-draft fallback, empty it.
+
+**Analytics** — `assets/js/config.js` holds `analytics.ga4Id`. Empty (the shipped
+state) means no script, no cookie and no request to Google at all. Paste the
+Measurement ID from GA4 Admin → Data streams to switch it on.
+
+Because GA4 stores cookies, `requireConsent` (default `true`) keeps it off until
+the visitor accepts: declining loads nothing rather than loading Google with
+storage disabled. Consent is remembered in `localStorage`, and `privacy.html`
+carries a control to clear that choice.
+
+Beyond page views, `window.siteTrack(name, props)` records the things worth
+knowing — it is a no-op when analytics is off, so callers never check:
+
+| Event | Fires when | Tells you |
+| --- | --- | --- |
+| `problem_selected` | a homepage problem is picked | which problems the market actually has |
+| `case_opened` | any link to a worked example | which analysis earns attention |
+| `service_opened` | any link to a service section | what visitors price up |
+| `enquiry_sent` / `enquiry_failed` | contact form outcome | the bottom of the funnel |
+
+Case and service events are derived from the link's `href`, so new links are
+covered without touching the markup.
 
 **Canonical URLs and sitemap** — set `SITE_URL` at the top of `tools/build.js`
 to your public origin (e.g. `https://farshadnassiri.com`) and rebuild. Absolute

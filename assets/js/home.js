@@ -254,6 +254,7 @@
       x.setAttribute('aria-pressed', String(x === b));
     });
     render(q);
+    if (window.siteTrack) window.siteTrack('problem_selected', { problem: q.id });
   });
 
   window.addEventListener('themechange', function () { render(current); });
