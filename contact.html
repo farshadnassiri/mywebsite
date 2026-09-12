@@ -19,6 +19,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/main.css">
+<!-- Deferred, and in the head: the browser starts fetching them while it is
+     still parsing the HTML, and runs them in order once it has finished. At the
+     end of the body they could only start downloading after the whole document
+     had been parsed. -->
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/site.js" defer></script>
+
 <script>
   /* Set the theme before first paint to avoid a flash. */
   (function () {
@@ -353,9 +360,6 @@
     </div>
   </div>
 </footer>
-
-<script src="assets/js/config.js"></script>
-<script src="assets/js/site.js"></script>
 
 </body>
 </html>

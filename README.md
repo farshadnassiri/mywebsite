@@ -28,6 +28,18 @@ every page. The arithmetic is real — every page computes in the browser from t
 inputs on screen, and each worked example states plainly how much of a real
 engagement it represents and what it leaves out.
 
+**Layout stability — do not undo this.** The homepage hero ships its first
+state as static HTML: the six problem buttons, and the default answer's
+heading, KPIs, caption, conclusion and footnote. `home.js` adopts that markup
+rather than building it, and `#ans-chart` carries `.chart--reserved` to hold the
+chart's height before the SVG is drawn.
+
+Moving any of that back into JavaScript reintroduces a ~0.25 CLS on the busiest
+page — the hero grew by roughly 1,000px once the script ran. Measure with a
+`PerformanceObserver` on `layout-shift` before and after any change to that
+section. If the static copy and `QUESTIONS[0]` in `home.js` ever disagree, the
+shift comes back in proportion to the difference.
+
 **Positioning notes for future edits:**
 
 - The site makes no reference to technology, automation, AI, software

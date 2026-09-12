@@ -46,7 +46,7 @@ function build() {
     const base = depth ? '../'.repeat(depth) : '';
 
     const scripts = (meta.scripts || [])
-      .map((s) => `  <script src="${base}assets/js/${s}"></script>`)
+      .map((s) => `<script src="${base}assets/js/${s}" defer></script>`)
       .join('\n');
 
     let html = SHELL

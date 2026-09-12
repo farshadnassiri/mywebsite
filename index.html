@@ -19,6 +19,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/main.css">
+<!-- Deferred, and in the head: the browser starts fetching them while it is
+     still parsing the HTML, and runs them in order once it has finished. At the
+     end of the body they could only start downloading after the whole document
+     had been parsed. -->
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/site.js" defer></script>
+<script src="assets/js/viz.js" defer></script>
+<script src="assets/js/home.js" defer></script>
 <script>
   /* Set the theme before first paint to avoid a flash. */
   (function () {
@@ -83,7 +91,14 @@
           Pick it below. You will see the exact analysis that answers it, the numbers it produces,
           and what the owner did about it — <strong>before you speak to anybody</strong>.
         </p>
-        <div class="qpicker" id="qpicker" role="group" aria-label="Choose the problem you have"></div>
+        <div class="qpicker" id="qpicker" role="group" aria-label="Choose the problem you have">
+          <button type="button" data-q="money" aria-pressed="true"><span class="qpicker__mark">1</span><span>Where is my money actually going?</span></button>
+          <button type="button" data-q="profit" aria-pressed="false"><span class="qpicker__mark">2</span><span>Am I actually profitable?</span></button>
+          <button type="button" data-q="price" aria-pressed="false"><span class="qpicker__mark">3</span><span>Are we charging enough?</span></button>
+          <button type="button" data-q="cash" aria-pressed="false"><span class="qpicker__mark">4</span><span>Will we run out of cash?</span></button>
+          <button type="button" data-q="hire" aria-pressed="false"><span class="qpicker__mark">5</span><span>Can we afford to hire?</span></button>
+          <button type="button" data-q="leak" aria-pressed="false"><span class="qpicker__mark">6</span><span>Could money be going out unnoticed?</span></button>
+        </div>
         <div class="flex between mt-3" style="gap:14px">
           <a class="link-arrow" href="solutions.html">See all 30 business problems</a>
           <a class="btn btn--ghost btn--sm" href="contact.html">Mine is not listed</a>
@@ -103,19 +118,23 @@
       <div class="panel">
         <div class="panel__bar">
           <span class="dot-row"><i></i><i></i><i></i></span>
-          <h4 id="ans-title">The answer</h4>
+          <h4 id="ans-title">Cost structure</h4>
           <span class="badge" style="margin-left:auto">Worked example</span>
         </div>
         <div class="panel__body answer">
           <div class="answer__head">
-            <span class="answer__q" id="ans-q"></span>
+            <span class="answer__q" id="ans-q">Where is my money actually going?</span>
           </div>
-          <div class="kpi-grid" id="ans-kpis"></div>
-          <div class="chart" id="ans-chart"></div>
-          <p class="xsmall muted" id="ans-caption"></p>
-          <div class="answer__take" id="ans-take"></div>
+          <div class="kpi-grid" id="ans-kpis">
+            <div class="kpi"><div class="kpi__label">Revenue</div><div class="kpi__val">$148k</div><div class="kpi__delta">per month</div></div>
+            <div class="kpi"><div class="kpi__label">Kept as profit</div><div class="kpi__val">13.1%</div><div class="kpi__delta">$19.4k a month</div></div>
+            <div class="kpi"><div class="kpi__label">Largest cost</div><div class="kpi__val">56%</div><div class="kpi__delta">delivering the work</div></div>
+          </div>
+          <div class="chart chart--reserved" id="ans-chart"></div>
+          <p class="xsmall muted" id="ans-caption">Every dollar of revenue, followed to what is left at the bottom.</p>
+          <div class="answer__take" id="ans-take">For every <strong>$100 you invoice</strong>, $56 goes straight back out on delivering the work, $20 on the team and admin behind it, and $11 on overheads. <strong>$13 stays.</strong> The $56 is the number worth arguing about — it moves with every single job you accept, so a two-point improvement there is worth more than any saving on the other two combined.</div>
           <div class="answer__get">
-            <span id="ans-get"></span>
+            <span id="ans-get">In a review you get this for <b>your</b> business, with every cost traced to where it actually arises — including the ones currently buried in “general expenses”.</span>
           </div>
           <div class="btn-row">
             <a class="btn btn--primary btn--sm" id="ans-example" href="demos/profitability.html">See the full case</a>
@@ -431,9 +450,5 @@
   </div>
 </footer>
 
-<script src="assets/js/config.js"></script>
-<script src="assets/js/site.js"></script>
-  <script src="assets/js/viz.js"></script>
-  <script src="assets/js/home.js"></script>
 </body>
 </html>

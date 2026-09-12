@@ -746,3 +746,7 @@ html[data-theme="dark"] .consent { box-shadow: 0 -8px 32px -18px rgba(0,0,0,.7);
 .consent__t a { color: var(--accent); border-bottom: 1px solid currentColor; }
 .consent__b { display: flex; gap: 10px; margin-left: auto; }
 @media (max-width: 560px) { .consent__b { margin-left: 0; width: 100%; } .consent__b .btn { flex: 1; } }
+
+/* The answer chart is drawn by script after load. Without a reserved box the
+   panel would grow by the chart's height on first paint, shifting the page. */
+.chart--reserved { min-height: 250px; }

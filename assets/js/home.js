@@ -219,12 +219,11 @@
     }
   ];
 
-  /* ---- Build the picker ---- */
+  /* ---- The picker ships in the HTML ----
+     Building it here would mean the hero grows by ~376px once this script runs,
+     which is a layout shift on every first visit. The markup is static; this
+     only takes it over. */
   var picker = $('qpicker');
-  picker.innerHTML = QUESTIONS.map(function (q, i) {
-    return '<button type="button" data-q="' + q.id + '" aria-pressed="' + (i === 0) + '">' +
-      '<span class="qpicker__mark">' + (i + 1) + '</span><span>' + q.short + '</span></button>';
-  }).join('');
 
   var chart = FN.mount($('ans-chart'), function () { return document.createElement('div'); });
   var current = QUESTIONS[0];
