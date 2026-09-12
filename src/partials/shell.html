@@ -15,9 +15,11 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="{{canonical}}">
 <link rel="icon" href="{{base}}assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<!-- Fonts are served from this site, so there is no third-party stylesheet to
+     fetch first. Preloaded because the stylesheet only reveals them a round
+     trip later, and both are needed for the first screen. -->
+<link rel="preload" href="{{base}}assets/fonts/newsreader-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{base}}assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{{base}}assets/css/main.css">
 <!-- Deferred, and in the head: the browser starts fetching them while it is
      still parsing the HTML, and runs them in order once it has finished. At the

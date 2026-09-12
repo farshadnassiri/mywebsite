@@ -1,7 +1,41 @@
 /* ==========================================================================
-   Farshad Nassiri — Tech-Enabled Finance / Fractional CFO
+   Farshad Nassiri — Fractional CFO & FP&A
    Design system: minimal, editorial, decision-first.
    ========================================================================== */
+
+/* ---------- Fonts, served from this site ----------
+   Variable weight axes, latin subset, taken from the Fontsource builds of the
+   upstream projects. Self-hosted rather than fetched from Google Fonts: that
+   cost two extra connections before any text could be painted in the intended
+   face. Both are SIL Open Font License 1.1 — see the LICENSE files alongside
+   the woff2 in assets/fonts/.
+   The unicode-range matches the latin subset exactly, so a character outside it
+   (→ and ◆ are the only two this site uses) falls back to a system face, which
+   is what happened with the hosted version too.
+
+   font-display is `optional`, not `swap`. With swap the browser paints in a
+   fallback and then re-paints in the real face, and because the fallbacks are
+   around 5% narrower the text reflows — measured at 0.13 CLS on the homepage,
+   which is most of what the field data was reporting. `optional` removes that
+   by construction: the face is either ready in time and used, or skipped for
+   that one page load. Since these files are on this origin and preloaded, ready
+   in time is the normal case, and after the first visit they come from cache. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: optional;
+  font-weight: 100 900;
+  src: url(../fonts/inter-latin-wght-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-display: optional;
+  font-weight: 200 800;
+  src: url(../fonts/newsreader-latin-wght-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
 
 /* ---------- Tokens ---------- */
 :root {

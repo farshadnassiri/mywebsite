@@ -28,6 +28,24 @@ every page. The arithmetic is real — every page computes in the browser from t
 inputs on screen, and each worked example states plainly how much of a real
 engagement it represents and what it leaves out.
 
+**Fonts are served from this site**, not from Google Fonts. Two variable woff2
+files in `assets/fonts/` (Inter 47KB, Newsreader 57KB, latin subset, weight axis
+only), taken from the Fontsource builds and shipped with their SIL OFL licences.
+That removes a render-blocking third-party stylesheet and two extra connections
+before any text can be painted.
+
+`font-display` is **`optional`, not `swap`** — deliberately. The fallbacks are
+about 5% narrower than these faces, so swapping reflowed the text and measured
+0.13 CLS on the homepage. `optional` cannot shift: the face is either ready in
+time or skipped for that page load, and since the files are same-origin and
+preloaded it is normally ready. Do not change it back to `swap` without
+measuring.
+
+The `<link rel="preload">` for both fonts carries `crossorigin` because font
+fetches are CORS-mode even same-origin. Note this makes the preload fail over
+`file://` (origin `null`); test font behaviour over `node tools/serve.js`, not
+by opening the HTML directly.
+
 **Layout stability — do not undo this.** The homepage hero ships its first
 state as static HTML: the six problem buttons, and the default answer's
 heading, KPIs, caption, conclusion and footnote. `home.js` adopts that markup
